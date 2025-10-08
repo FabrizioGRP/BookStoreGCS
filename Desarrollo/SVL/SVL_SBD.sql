@@ -7,6 +7,15 @@ USE BookStoreDB;
 GO
 
 ------------------------------------------------
+-- TABLA: Administrador
+------------------------------------------------
+CREATE TABLE Administrador (
+    Id_Administrador INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(100) NOT NULL,
+    Contraseña NVARCHAR(100) NOT NULL
+);
+
+------------------------------------------------
 -- TABLA: Cliente
 ------------------------------------------------
 CREATE TABLE Cliente (
