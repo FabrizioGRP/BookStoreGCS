@@ -12,7 +12,7 @@ GO
 CREATE TABLE Administrador (
     Id_Administrador INT IDENTITY(1,1) PRIMARY KEY,
     Nombre NVARCHAR(100) NOT NULL,
-    Contrase�a NVARCHAR(100) NOT NULL
+    Contraseña NVARCHAR(100) NOT NULL
 );
 
 ------------------------------------------------
@@ -97,3 +97,27 @@ CREATE TABLE Comprobante (
     Fecha_Emision DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (Id_Pedido) REFERENCES Pedido(Id_Pedido)
 );
+
+INSERT INTO Administrador (Nombre, Contraseña)
+VALUES
+('admin', '1234'),
+('lider', 'abc123'),
+('gerente', 'pass789'),
+('director', 'libros2025'),
+('principal', 'admin@2025');
+
+INSERT INTO Cliente (Nombre, Email, Direccion, Telefono)
+VALUES
+('Carlos Mendoza', 'carlos.mendoza@email.com', 'Av. Los Pinos 245, Lima', '987654321'),
+('Lucía Torres', 'lucia.torres@email.com', 'Calle Primavera 103, Arequipa', '956784123'),
+('Jorge Salazar', 'jorge.salazar@email.com', 'Jr. Las Flores 89, Trujillo', '923456789'),
+('María López', 'maria.lopez@email.com', 'Av. Grau 750, Chiclayo', '998877665'),
+('Ana Castillo', 'ana.castillo@email.com', 'Calle Los Olivos 56, Piura', '912345678');
+
+INSERT INTO Libro (Titulo, Autor, ISBN, Precio, Stock, Categoria, Editorial)
+VALUES
+('Cien Años de Soledad', 'Gabriel García Márquez', '9780307474728', 59.90, 12, 'Novela', 'Sudamericana'),
+('El Principito', 'Antoine de Saint-Exupéry', '9780156012195', 35.50, 25, 'Infantil', 'Gallimard'),
+('1984', 'George Orwell', '9780451524935', 49.99, 18, 'Ficción', 'Secker & Warburg'),
+('Don Quijote de la Mancha', 'Miguel de Cervantes', '9788420471839', 79.90, 10, 'Clásico', 'Alianza Editorial'),
+('La Ciudad y los Perros', 'Mario Vargas Llosa', '9788439727948', 54.90, 14, 'Literatura Peruana', 'Alfaguara');
