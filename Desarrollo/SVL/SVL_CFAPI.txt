@@ -1,0 +1,1836 @@
+BookStore+
+**********
+//Web.config
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Para obtener más información acerca de cómo configurar la aplicación ASP.NET, visite
+  https://go.microsoft.com/fwlink/?LinkId=301880
+-->
+<configuration>
+
+	<!-- Conexión a la base de datos BookStoreDB -->
+	<connectionStrings>
+		<add name="SQL" connectionString="Data Source=localhost;Initial Catalog=BookStoreDB;Integrated Security=True;" providerName="System.Data.SqlClient" />
+	</connectionStrings>
+
+	<appSettings>
+		<add key="webpages:Version" value="3.0.0.0" />
+		<add key="webpages:Enabled" value="false" />
+		<add key="ClientValidationEnabled" value="true" />
+		<add key="UnobtrusiveJavaScriptEnabled" value="true" />
+	</appSettings>
+
+	<system.web>
+		<compilation debug="true" targetFramework="4.7.2" />
+		<httpRuntime targetFramework="4.7.2" />
+	</system.web>
+
+	<runtime>
+		<assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+			<dependentAssembly>
+				<assemblyIdentity name="Antlr3.Runtime" publicKeyToken="eb42632606e9261f" />
+				<bindingRedirect oldVersion="0.0.0.0-3.5.0.2" newVersion="3.5.0.2" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="Microsoft.Web.Infrastructure" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="0.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" />
+				<bindingRedirect oldVersion="0.0.0.0-13.0.0.0" newVersion="13.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.Optimization" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="1.0.0.0-1.1.0.0" newVersion="1.1.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="1.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="1.0.0.0-5.2.9.0" newVersion="5.2.9.0" />
+			</dependentAssembly>
+		</assemblyBinding>
+	</runtime>
+
+	<system.codedom>
+		<compilers>
+			<compiler language="c#;cs;csharp" extension=".cs"
+					  type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider, 
+                      Microsoft.CodeDom.Providers.DotNetCompilerPlatform, 
+                      Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+					  warningLevel="4"
+					  compilerOptions="/langversion:default /nowarn:1659;1699;1701" />
+			<compiler language="vb;vbs;visualbasic;vbscript" extension=".vb"
+					  type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.VBCodeProvider, 
+                      Microsoft.CodeDom.Providers.DotNetCompilerPlatform, 
+                      Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+					  warningLevel="4"
+					  compilerOptions="/langversion:default /nowarn:41008 /define:_MYTYPE=&quot;Web&quot; /optionInfer+" />
+		</compilers>
+	</system.codedom>
+
+</configuration>
+
+//AdministradorDA
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using BookStore.Entidades.Core;
+using System.Configuration;
+
+namespace BookStore.AccesoDatos.Core
+{
+    public class AdministradorDA
+    {
+        private readonly string cadenaConexion = ConfigurationManager.ConnectionStrings["SQL"].ConnectionString;
+
+        public Administrador ValidarAdministrador(string nombre, string contraseña)
+        {
+            Administrador admin = null;
+
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "SELECT * FROM Administrador WHERE Nombre = @nombre AND Contraseña = @contraseña";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@nombre", nombre);
+                cmd.Parameters.AddWithValue("@contraseña", contraseña);
+
+                cn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    admin = new Administrador
+                    {
+                        Id_Administrador = (int)dr["Id_Administrador"],
+                        Nombre = dr["Nombre"].ToString(),
+                        Contraseña = dr["Contraseña"].ToString()
+                    };
+                }
+            }
+
+            return admin;
+        }
+    }
+}
+
+//ClienteDA
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using BookStore.Entidades.Core;
+using System.Configuration;
+
+namespace BookStore.AccesoDatos.Core
+{
+    public class ClienteDA
+    {
+        private readonly string cadenaConexion = ConfigurationManager.ConnectionStrings["SQL"].ConnectionString;
+
+        public Cliente ValidarCliente(string nombre, string email)
+        {
+            Cliente cliente = null;
+
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "SELECT * FROM Cliente WHERE Nombre = @nombre AND Email = @correo";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@nombre", nombre);
+                cmd.Parameters.AddWithValue("@correo", email);
+
+                cn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    cliente = new Cliente
+                    {
+                        Id_Cliente = (int)dr["Id_Cliente"],
+                        Nombre = dr["Nombre"].ToString(),
+                        Email = dr["Email"].ToString(),
+                        Direccion = dr["Direccion"] == DBNull.Value ? "" : dr["Direccion"].ToString(),
+                        Telefono = dr["Telefono"] == DBNull.Value ? "" : dr["Telefono"].ToString()
+                    };
+                }
+            }
+
+            return cliente;
+        }
+    }
+}
+
+//LibroDA
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using BookStore.Entidades.Core;
+using System.Configuration;
+
+namespace BookStore.AccesoDatos.Core
+{
+    public class LibroDA
+    {
+        private readonly string cadenaConexion = ConfigurationManager.ConnectionStrings["SQL"].ConnectionString;
+
+        public List<Libro> ListarLibros()
+        {
+            List<Libro> lista = new List<Libro>();
+
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "SELECT * FROM Libro";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Libro
+                    {
+                        Id_Libro = (int)dr["Id_Libro"],
+                        Titulo = dr["Titulo"].ToString(),
+                        Autor = dr["Autor"] == DBNull.Value ? "" : dr["Autor"].ToString(),
+                        ISBN = dr["ISBN"] == DBNull.Value ? "" : dr["ISBN"].ToString(),
+                        Precio = (decimal)dr["Precio"],
+                        Stock = (int)dr["Stock"],
+                        Categoria = dr["Categoria"] == DBNull.Value ? "" : dr["Categoria"].ToString(),
+                        Editorial = dr["Editorial"] == DBNull.Value ? "" : dr["Editorial"].ToString()
+                    });
+                }
+            }
+
+            return lista;
+        }
+
+        public bool AgregarLibro(Libro libro)
+        {
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = @"INSERT INTO Libro (Titulo, Autor, ISBN, Precio, Stock, Categoria, Editorial)
+                                 VALUES (@Titulo, @Autor, @ISBN, @Precio, @Stock, @Categoria, @Editorial)";
+                SqlCommand cmd = new SqlCommand(query, cn);
+
+                cmd.Parameters.AddWithValue("@Titulo", libro.Titulo);
+                cmd.Parameters.AddWithValue("@Autor", libro.Autor ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ISBN", libro.ISBN ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Precio", libro.Precio);
+                cmd.Parameters.AddWithValue("@Stock", libro.Stock);
+                cmd.Parameters.AddWithValue("@Categoria", libro.Categoria ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Editorial", libro.Editorial ?? (object)DBNull.Value);
+
+                cn.Open();
+                int filas = cmd.ExecuteNonQuery();
+                return filas > 0;
+            }
+        }
+
+        public bool ActualizarStock(int idLibro, int nuevoStock)
+        {
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "UPDATE Libro SET Stock = @Stock WHERE Id_Libro = @Id_Libro";
+                SqlCommand cmd = new SqlCommand(query, cn);
+
+                cmd.Parameters.AddWithValue("@Stock", nuevoStock);
+                cmd.Parameters.AddWithValue("@Id_Libro", idLibro);
+
+                cn.Open();
+                int filas = cmd.ExecuteNonQuery();
+                return filas > 0;
+            }
+        }
+
+        public Libro ObtenerLibroPorId(int idLibro)
+        {
+            Libro libro = null;
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "SELECT * FROM Libro WHERE Id_Libro = @Id_Libro";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@Id_Libro", idLibro);
+
+                cn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+                if (dr.Read())
+                {
+                    libro = new Libro
+                    {
+                        Id_Libro = (int)dr["Id_Libro"],
+                        Titulo = dr["Titulo"].ToString(),
+                        Autor = dr["Autor"].ToString(),
+                        ISBN = dr["ISBN"].ToString(),
+                        Precio = (decimal)dr["Precio"],
+                        Stock = (int)dr["Stock"],
+                        Categoria = dr["Categoria"].ToString(),
+                        Editorial = dr["Editorial"].ToString()
+                    };
+                }
+            }
+            return libro;
+        }
+
+        public bool EliminarLibro(int idLibro)
+        {
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "DELETE FROM Libro WHERE Id_Libro = @Id_Libro";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@Id_Libro", idLibro);
+
+                cn.Open();
+                int filas = cmd.ExecuteNonQuery();
+                return filas > 0;
+            }
+        }
+
+        public List<Libro> BuscarLibrosPorTitulo(string titulo)
+        {
+            List<Libro> lista = new List<Libro>();
+
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "SELECT * FROM Libro WHERE Titulo LIKE @Titulo";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@Titulo", "%" + titulo + "%");
+
+                cn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Libro
+                    {
+                        Id_Libro = (int)dr["Id_Libro"],
+                        Titulo = dr["Titulo"].ToString(),
+                        Autor = dr["Autor"].ToString(),
+                        ISBN = dr["ISBN"].ToString(),
+                        Precio = (decimal)dr["Precio"],
+                        Stock = (int)dr["Stock"],
+                        Categoria = dr["Categoria"].ToString(),
+                        Editorial = dr["Editorial"].ToString()
+                    });
+                }
+            }
+
+            return lista;
+        }
+
+        public bool DisminuirStock(int idLibro, int cantidad)
+        {
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "UPDATE Libro SET Stock = Stock - @Cantidad WHERE Id_Libro = @Id_Libro AND Stock >= @Cantidad";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@Cantidad", cantidad);
+                cmd.Parameters.AddWithValue("@Id_Libro", idLibro);
+
+                cn.Open();
+                int filas = cmd.ExecuteNonQuery();
+                return filas > 0;
+            }
+        }
+    }
+}
+
+//PedidoDA
+using BookStore.Entidades.Core;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.AccesoDatos.Core
+{
+    public class PedidoDA
+    {
+        private readonly string cadenaConexion;
+
+        public PedidoDA(string cadenaConexion)
+        {
+            this.cadenaConexion = cadenaConexion;
+        }
+
+        public int RegistrarPedido(Pedido pedido)
+        {
+            int idPedidoGenerado = 0;
+
+            using (SqlConnection conexion = new SqlConnection(cadenaConexion))
+            {
+                conexion.Open();
+                SqlTransaction transaccion = conexion.BeginTransaction();
+
+                try
+                {
+                    // Insertar el pedido principal
+                    string sqlPedido = @"INSERT INTO Pedido (Id_Cliente, Fecha_Pedido, Metodo_Pago, Total)
+                                         OUTPUT INSERTED.Id_Pedido
+                                         VALUES (@Id_Cliente, @Fecha_Pedido, @Metodo_Pago, @Total)";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlPedido, conexion, transaccion))
+                    {
+                        cmd.Parameters.AddWithValue("@Id_Cliente", pedido.Id_Cliente);
+                        cmd.Parameters.AddWithValue("@Fecha_Pedido", pedido.Fecha_Pedido);
+                        cmd.Parameters.AddWithValue("@Metodo_Pago", pedido.Metodo_Pago);
+                        cmd.Parameters.AddWithValue("@Total", pedido.Total);
+
+                        idPedidoGenerado = (int)cmd.ExecuteScalar();
+                    }
+
+                    // Insertar los detalles del pedido
+                    foreach (var detalle in pedido.Detalles)
+                    {
+                        string sqlDetalle = @"INSERT INTO Pedido_Detalle (Id_Pedido, Id_Libro, Cantidad, Precio_Unitario)
+                                              VALUES (@Id_Pedido, @Id_Libro, @Cantidad, @Precio_Unitario)";
+
+                        using (SqlCommand cmdDetalle = new SqlCommand(sqlDetalle, conexion, transaccion))
+                        {
+                            cmdDetalle.Parameters.AddWithValue("@Id_Pedido", idPedidoGenerado);
+                            cmdDetalle.Parameters.AddWithValue("@Id_Libro", detalle.Id_Libro);
+                            cmdDetalle.Parameters.AddWithValue("@Cantidad", detalle.Cantidad);
+                            cmdDetalle.Parameters.AddWithValue("@Precio_Unitario", detalle.Precio_Unitario);
+                            cmdDetalle.ExecuteNonQuery();
+                        }
+                    }
+
+                    transaccion.Commit();
+                }
+                catch (Exception)
+                {
+                    transaccion.Rollback();
+                    throw;
+                }
+            }
+
+            return idPedidoGenerado;
+        }
+
+        public List<Pedido> ListarPedidos()
+        {
+            List<Pedido> lista = new List<Pedido>();
+
+            using (SqlConnection conexion = new SqlConnection(cadenaConexion))
+            {
+                conexion.Open();
+                string sql = @"SELECT p.Id_Pedido, p.Id_Cliente, p.Fecha_Pedido, p.Metodo_Pago, p.Total
+                               FROM Pedido p";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conexion))
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        lista.Add(new Pedido
+                        {
+                            Id_Pedido = Convert.ToInt32(reader["Id_Pedido"]),
+                            Id_Cliente = Convert.ToInt32(reader["Id_Cliente"]),
+                            Fecha_Pedido = Convert.ToDateTime(reader["Fecha_Pedido"]),
+                            Metodo_Pago = reader["Metodo_Pago"].ToString(),
+                            Total = Convert.ToDecimal(reader["Total"])
+                        });
+                    }
+                }
+            }
+
+            return lista;
+        }
+    }
+}
+
+//AdministradorLN
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookStore.AccesoDatos.Core;
+using BookStore.Entidades.Core;
+
+namespace BookStore.LogicaNegocio.Core
+{
+    public class AdministradorLN
+    {
+        private readonly AdministradorDA adminDA = new AdministradorDA();
+
+        public Administrador Login(string nombre, string contraseña)
+        {
+            return adminDA.ValidarAdministrador(nombre, contraseña);
+        }
+    }
+}
+
+//ClienteLN
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookStore.AccesoDatos.Core;
+using BookStore.Entidades.Core;
+
+namespace BookStore.LogicaNegocio.Core
+{
+    public class ClienteLN
+    {
+        private readonly ClienteDA clienteDA = new ClienteDA();
+
+        public Cliente Login(string nombre, string email)
+        {
+            return clienteDA.ValidarCliente(nombre, email);
+        }
+    }
+}
+
+//LibroLN
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookStore.AccesoDatos.Core;
+using BookStore.Entidades.Core;
+
+namespace BookStore.LogicaNegocio.Core
+{
+    public class LibroLN
+    {
+        private readonly LibroDA libroDA = new LibroDA();
+
+        public List<Libro> ListarLibros()
+        {
+            return libroDA.ListarLibros();
+        }
+
+        public Libro ObtenerLibroPorId(int idLibro)
+        {
+            if (idLibro <= 0)
+                return null;
+
+            return libroDA.ObtenerLibroPorId(idLibro);
+        }
+
+        public bool AgregarLibro(Libro libro)
+        {
+            if (string.IsNullOrWhiteSpace(libro.Titulo) || libro.Precio <= 0 || libro.Stock < 0)
+                return false;
+
+            // Validar ISBN duplicado
+            var libros = libroDA.ListarLibros();
+            if (libros.Any(l => l.ISBN == libro.ISBN))
+                return false;
+
+            return libroDA.AgregarLibro(libro);
+        }
+
+        public bool AumentarStock(int idLibro, int cantidad)
+        {
+            if (cantidad <= 0)
+                return false;
+
+            var libro = libroDA.ObtenerLibroPorId(idLibro);
+            if (libro == null)
+                return false;
+
+            int nuevoStock = libro.Stock + cantidad;
+            return libroDA.ActualizarStock(idLibro, nuevoStock);
+        }
+
+        public bool EliminarLibroSiStockCero(int idLibro)
+        {
+            var libro = libroDA.ObtenerLibroPorId(idLibro);
+            if (libro != null && libro.Stock == 0)
+            {
+                return libroDA.EliminarLibro(idLibro);
+            }
+            return false;
+        }
+
+        public List<Libro> BuscarLibrosPorTitulo(string titulo)
+        {
+            if (string.IsNullOrWhiteSpace(titulo))
+                return new List<Libro>();
+
+            return libroDA.BuscarLibrosPorTitulo(titulo);
+        }
+
+        public bool DisminuirStock(int idLibro, int cantidad)
+        {
+            if (cantidad <= 0)
+                return false;
+
+            var libro = libroDA.ObtenerLibroPorId(idLibro);
+            if (libro == null || libro.Stock < cantidad)
+                return false;
+
+            return libroDA.DisminuirStock(idLibro, cantidad);
+        }
+    }
+}
+
+//PedidoLN
+using BookStore.AccesoDatos.Core;
+using BookStore.Entidades.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.LogicaNegocio.Core
+{
+    public class PedidoLN
+    {
+        private readonly PedidoDA pedidoDA;
+
+        public PedidoLN(string cadenaConexion)
+        {
+            pedidoDA = new PedidoDA(cadenaConexion);
+        }
+
+        public int CrearPedido(Pedido pedido)
+        {
+            if (pedido == null || pedido.Detalles == null || pedido.Detalles.Count == 0)
+                throw new ArgumentException("El pedido no contiene detalles válidos.");
+
+            // Calcular total
+            pedido.Total = 0;
+            foreach (var detalle in pedido.Detalles)
+            {
+                if (detalle.Cantidad <= 0)
+                    throw new ArgumentException("La cantidad de un libro debe ser mayor a 0.");
+
+                pedido.Total += detalle.Cantidad * detalle.Precio_Unitario;
+            }
+
+            pedido.Fecha_Pedido = DateTime.Now;
+
+            // Registrar pedido y obtener ID
+            int idPedido = pedidoDA.RegistrarPedido(pedido);
+
+            // 🔹 Actualizar stock de cada libro comprado
+            LibroLN libroLN = new LibroLN();
+            foreach (var detalle in pedido.Detalles)
+            {
+                bool actualizado = libroLN.DisminuirStock(detalle.Id_Libro, detalle.Cantidad);
+                if (!actualizado)
+                {
+                    // Si el stock no se pudo actualizar, podrías lanzar una excepción o registrar el error
+                    throw new Exception($"No se pudo disminuir el stock del libro con ID {detalle.Id_Libro}.");
+                }
+            }
+
+            return idPedido;
+        }
+
+        public List<Pedido> ObtenerPedidos()
+        {
+            return pedidoDA.ListarPedidos();
+        }
+    }
+}
+
+//Administrador
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.Entidades.Core
+{
+    public class Administrador
+    {
+        public int Id_Administrador { get; set; }
+        public string Nombre { get; set; }
+        public string Contraseña { get; set; }
+    }
+}
+
+//Cliente
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.Entidades.Core
+{
+    public class Cliente
+    {
+        public int Id_Cliente { get; set; }
+        public string Nombre { get; set; }
+        public string Email { get; set; }
+        public string Direccion { get; set; }
+        public string Telefono { get; set; }
+    }
+}
+
+//Libro
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.Entidades.Core
+{
+    public class Libro
+    {
+        public int Id_Libro { get; set; }
+        public string Titulo { get; set; }
+        public string Autor { get; set; }
+        public string ISBN { get; set; }
+        public decimal Precio { get; set; }
+        public int Stock { get; set; }
+        public string Categoria { get; set; }
+        public string Editorial { get; set; }
+        public bool Disponible => Stock > 0; // propiedad de solo lectura
+        public int CantidadSeleccionada { get; set; } // cantidad elegida por el cliente
+    }
+}
+
+//Pedido
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.Entidades.Core
+{
+    public class Pedido
+    {
+        public int Id_Pedido { get; set; }
+        public int Id_Cliente { get; set; }
+        public DateTime Fecha_Pedido { get; set; }
+        public string Metodo_Pago { get; set; }
+        public decimal Total { get; set; }
+
+        // Relación con el cliente
+        public Cliente Cliente { get; set; }
+
+        // Relación con los detalles del pedido
+        public List<PedidoDetalle> Detalles { get; set; }
+
+        public Pedido()
+        {
+            Detalles = new List<PedidoDetalle>();
+        }
+    }
+}
+
+//PedidoDetalle
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.Entidades.Core
+{
+    public class PedidoDetalle
+    {
+        public int Id_Pedido_Detalle { get; set; }
+        public int Id_Pedido { get; set; }
+        public int Id_Libro { get; set; }
+        public int Cantidad { get; set; }
+        public decimal Precio_Unitario { get; set; }
+
+        // Relaciones con entidades
+        public Pedido Pedido { get; set; }
+        public Libro Libro { get; set; }
+    }
+}
+
+//Vista AgregarLibro
+@model BookStore.Entidades.Core.Libro
+
+@{
+    ViewBag.Title = "Agregar nuevo libro";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var rol = Session["rol"] != null ? Session["rol"].ToString() : "";
+}
+
+@if (rol != "Administrador")
+{
+    <div class="alert alert-danger">
+        No tienes permisos para acceder a esta sección.
+    </div>
+}
+else
+{
+    <h2>Agregar nuevo libro</h2>
+
+    using (Html.BeginForm("AgregarLibro", "Libro", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>Datos del libro</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Titulo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Titulo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Titulo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Autor, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Autor, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Autor, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ISBN, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ISBN, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Precio, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Precio, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01" } })
+                    @Html.ValidationMessageFor(model => model.Precio, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Stock, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Stock, new { htmlAttributes = new { @class = "form-control", min = "0", type = "number" } })
+                    @Html.ValidationMessageFor(model => model.Stock, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Categoria, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Categoria, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Categoria, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Editorial, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Editorial, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Editorial, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Guardar libro" class="btn btn-success" />
+                    <a href="@Url.Action("ListaLibros", "Libro")" class="btn btn-secondary">Volver a la lista</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+//Vista BuscarLibro
+@model IEnumerable<BookStore.Entidades.Core.Libro>
+
+@{
+    ViewBag.Title = "Buscar Libro";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Buscar Libros</h2>
+
+<div class="form-inline mb-3">
+    @using (Html.BeginForm("BuscarLibro", "Libro", FormMethod.Get))
+    {
+        <input type="text" name="titulo" class="form-control mr-2" placeholder="Buscar por título o autor..." value="@Request["titulo"]" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    }
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Categoría</th>
+                <th>Editorial</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Titulo</td>
+                    <td>@item.Autor</td>
+                    <td>@item.Categoria</td>
+                    <td>@item.Editorial</td>
+                    <td>@item.Precio.ToString("C")</td>
+                    <td>@(item.Disponible ? "Disponible" : "Agotado")</td>
+                    <td>
+                        @Html.ActionLink("Ver Detalles", "VerLibro", "Libro", new { idLibro = item.Id_Libro }, new { @class = "btn btn-info btn-sm" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No se encontraron libros que coincidan con la búsqueda.</p>
+}
+
+<div class="mt-4">
+    @Html.ActionLink("← Volver a la lista", "ListaLibros", "Libro", null, new { @class = "btn btn-secondary" })
+</div>
+
+//Vista ListaLibros
+@model IEnumerable<BookStore.Entidades.Core.Libro>
+
+@{
+    ViewBag.Title = "Lista de libros";
+    var rol = Session["rol"] != null ? Session["rol"].ToString() : "";
+}
+
+<h2>Lista de libros</h2>
+<p>ROL ACTUAL: @Session["rol"]</p> <!-- Comentar esta línea luego -->
+<!-- Mostrar mensajes -->
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<!-- ============================= -->
+<!-- SECCIÓN SUPERIOR DE BOTONES -->
+<!-- ============================= -->
+@if (rol == "Administrador")
+{
+    <p>
+        @Html.ActionLink("Agregar libro", "AgregarLibro", "Libro", null, new { @class = "btn btn-success" })
+    </p>
+}
+else if (rol == "Cliente")
+{
+    <div class="d-flex mb-3 align-items-center gap-2">
+        @using (Html.BeginForm("BuscarLibro", "Libro", FormMethod.Get, new { @class = "d-flex align-items-center gap-2 flex-grow-1" }))
+        {
+            <input type="text" name="titulo" class="form-control" placeholder="Buscar por título..." style="max-width: 350px;" />
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        }
+
+        @Html.ActionLink("Ver carrito", "VerCarrito", "Pedido", null, new { @class = "btn btn-warning ms-2" })
+    </div>
+}
+
+<!-- ============================= -->
+<!-- TABLA DE LIBROS -->
+<!-- ============================= -->
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            @if (rol == "Administrador")
+            {
+                <th style="width: 220px;">Acciones</th>
+            }
+            else if (rol == "Cliente")
+            {
+                <th style="width: 280px;">Acciones</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var libro in Model)
+        {
+            <tr>
+                <td>@libro.Titulo</td>
+                <td>@libro.Autor</td>
+                <td>@libro.Precio.ToString("F2")</td>
+                <td>@libro.Stock</td>
+
+                @if (rol == "Administrador")
+                {
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            @using (Html.BeginForm("AumentarStock", "Libro", FormMethod.Post, new { @class = "d-flex align-items-center gap-2" }))
+                            {
+                                @Html.Hidden("id", libro.Id_Libro)
+                                <input type="number" name="cantidad" min="1" class="form-control form-control-sm w-25" placeholder="+" />
+                                <input type="submit" value="Aumentar" class="btn btn-primary btn-sm" />
+                            }
+
+                            @using (Html.BeginForm("EliminarLibro", "Libro", FormMethod.Post, new { @class = "ms-2" }))
+                            {
+                                @Html.Hidden("id", libro.Id_Libro)
+                                <input type="submit" value="Eliminar" class="btn btn-danger btn-sm"
+                                       onclick="return confirm('¿Seguro que deseas eliminar este libro (solo si stock = 0)?');" />
+                            }
+                        </div>
+                    </td>
+                }
+                else if (rol == "Cliente")
+                {
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- Botón Ver -->
+                            @Html.ActionLink("Ver", "VerLibro", "Libro", new { idLibro = libro.Id_Libro }, new { @class = "btn btn-info btn-sm" })
+
+                            @using (Html.BeginForm("AgregarAlCarrito", "Libro", FormMethod.Post))
+                            {
+                                @Html.Hidden("idLibro", libro.Id_Libro)
+
+                                <input type="number" name="cantidad" value="1" min="1" max="@libro.Stock"
+                                       class="form-control form-control-sm text-center w-25" placeholder="+" />
+
+                                <input type="submit" value="Agregar al carrito" class="btn btn-success btn-sm" />
+                            }
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    .form-control-sm {
+        width: 70px !important;
+    }
+
+    td .d-flex {
+        flex-wrap: nowrap;
+    }
+
+    .gap-2 {
+        gap: 8px;
+    }
+
+    .btn-warning {
+        color: black !important;
+    }
+</style>
+
+//Vista VerLibro
+@model BookStore.Entidades.Core.Libro
+
+@{
+    ViewBag.Title = "Detalles del Libro";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Si luego agregas imágenes, aquí podrías mostrar la portada -->
+            <img src="~/Content/Images/default-book.png" alt="Portada del libro" class="img-fluid rounded shadow-sm" />
+        </div>
+
+        <div class="col-md-8">
+            <h2 class="text-primary mb-3">@Model.Titulo</h2>
+            <h5 class="text-muted">Autor: @Model.Autor</h5>
+            <p><strong>ISBN:</strong> @Model.ISBN</p>
+            <p><strong>Categoría:</strong> @Model.Categoria</p>
+            <p><strong>Editorial:</strong> @Model.Editorial</p>
+
+            <h4 class="text-success mt-3">
+                Precio: S/. @Model.Precio
+            </h4>
+
+            <p>
+                <strong>Stock disponible:</strong>
+                @if (Model.Stock > 0)
+                {
+                    <span class="text-success">@Model.Stock unidades</span>
+                }
+                else
+                {
+                    <span class="text-danger">Agotado</span>
+                }
+            </p>
+
+            <hr />
+
+            @if (Model.Stock > 0 && Model.Disponible)
+            {
+                <form action="@Url.Action("AgregarAlCarrito", "Libro")" method="post">
+                    <input type="hidden" name="idLibro" value="@Model.Id_Libro" />
+
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad:</label>
+                        <input type="number" name="cantidad" id="cantidad" class="form-control w-25" value="1" min="1" max="@Model.Stock" required />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-2">
+                        <i class="bi bi-cart-plus"></i> Agregar al carrito
+                    </button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-warning mt-3">
+                    Este libro no está disponible actualmente.
+                </div>
+            }
+
+            <div class="mt-4">
+                @Html.ActionLink("← Volver a la lista", "ListaLibros", "Libro", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+</div>
+
+//Vista Index(Login)
+@{
+    ViewBag.Title = "Login - BookStore";
+}
+
+<h2 style="text-align:center;">Bienvenido a BookStore</h2>
+<p style="text-align:center;">Inicie sesión como Cliente o Administrador</p>
+
+<div style="display:flex; justify-content:space-around; margin-top:30px;">
+
+    <!-- Login Cliente -->
+    <div style="width:45%; border:1px solid #ccc; padding:20px; border-radius:10px;">
+        <h3>Login Cliente</h3>
+        @using (Html.BeginForm("Index", "Login", FormMethod.Post))
+        {
+            @Html.Hidden("tipo", "cliente")
+
+            <div>
+                <label>Nombre:</label><br />
+                <input type="text" name="nombre" required class="form-control" />
+            </div>
+            <div>
+                <label>Email:</label><br />
+                <input type="email" name="email" required class="form-control" />
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary">Ingresar</button>
+        }
+    </div>
+
+    <!-- Login Administrador -->
+    <div style="width:45%; border:1px solid #ccc; padding:20px; border-radius:10px;">
+        <h3>Login Administrador</h3>
+        @using (Html.BeginForm("Index", "Login", FormMethod.Post))
+        {
+            @Html.Hidden("tipo", "admin")
+
+            <div>
+                <label>Nombre:</label><br />
+                <input type="text" name="nombre" required class="form-control" />
+            </div>
+            <div>
+                <label>Contraseña:</label><br />
+                <input type="password" name="contraseña" required class="form-control" />
+            </div>
+            <br />
+            <button type="submit" class="btn btn-danger">Ingresar</button>
+        }
+    </div>
+
+</div>
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red; text-align:center; margin-top:20px;">
+        @ViewBag.Error
+    </div>
+}
+
+//Vista VerCarrito
+@model IEnumerable<BookStore.Entidades.Core.PedidoDetalle>
+
+@{
+    ViewBag.Title = "Mi Carrito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    decimal total = 0;
+}
+
+<h2 class="text-center mt-4">🛒 Mi Carrito</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info text-center mt-4">
+        <p>Tu carrito está vacío.</p>
+        <a href="@Url.Action("ListaLibros", "Libro")" class="btn btn-primary mt-2">
+            Ver libros
+        </a>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Precio Unitario (S/)</th>
+                <th>Cantidad</th>
+                <th>Subtotal (S/)</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                decimal subtotal = item.Cantidad * item.Precio_Unitario;
+                total += subtotal;
+                <tr>
+                    <td>@(item.Libro != null ? item.Libro.Titulo : "Título no disponible")</td>
+                    <td>@(item.Libro != null ? item.Libro.Autor : "Autor no disponible")</td>
+                    <td>@item.Precio_Unitario.ToString("0.00")</td>
+                    <td>@item.Cantidad</td>
+                    <td>@subtotal.ToString("0.00")</td>
+                    <td>
+                        @Html.ActionLink("Eliminar", "EliminarDelCarrito", "Pedido",
+                            new { idLibro = item.Id_Libro },
+                            new { @class = "btn btn-danger btn-sm" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-end fw-bold">Total:</td>
+                <td colspan="2" class="fw-bold">S/ @total.ToString("0.00")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="d-flex justify-content-between mt-4 align-items-center">
+        <a href="@Url.Action("ListaLibros", "Libro")" class="btn btn-secondary">
+            ← Seguir comprando
+        </a>
+
+        <form action="@Url.Action("ConfirmarPedido", "Pedido")" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <div class="form-group mb-0">
+                <label for="metodoPago" class="me-2">Método de pago:</label>
+                <select name="metodoPago" id="metodoPago" class="form-select d-inline w-auto me-3" required>
+                    <option value="">-- Seleccionar --</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                    <option value="Yape">Yape</option>
+                    <option value="Plin">Plin</option>
+                    <option value="Efectivo">Efectivo</option>
+                </select>
+
+                <button type="submit" class="btn btn-success">
+                    Confirmar pedido ✔
+                </button>
+            </div>
+        </form>
+    </div>
+}
+//Vista Comprobante
+@model BookStore.Entidades.Core.Pedido
+
+@{
+    ViewBag.Title = "Comprobante de Pedido";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Comprobante de Pedido</h2>
+
+    <div class="card p-4 shadow-sm">
+        <h4>Datos del Pedido</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">Número de Pedido</dt>
+            <dd class="col-sm-9">@Model.Id_Pedido</dd>
+
+            <dt class="col-sm-3">Cliente</dt>
+            <dd class="col-sm-9">
+                @(Model.Cliente != null ? Model.Cliente.Nombre : "Cliente no disponible")
+            </dd>
+
+            <dt class="col-sm-3">Fecha</dt>
+            <dd class="col-sm-9">@Model.Fecha_Pedido.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Método de Pago</dt>
+            <dd class="col-sm-9">@Model.Metodo_Pago</dd>
+
+            <dt class="col-sm-3">Total</dt>
+            <dd class="col-sm-9">
+                <strong>S/. @Model.Total.ToString("F2")</strong>
+            </dd>
+        </dl>
+    </div>
+
+    <div class="card mt-4 p-4 shadow-sm">
+        <h4>Detalles del Pedido</h4>
+        <hr />
+        @if (Model.Detalles != null && Model.Detalles.Count > 0)
+        {
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Título</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario (S/)</th>
+                        <th>Subtotal (S/)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Detalles)
+                    {
+                        <tr>
+                            <td>@(item.Libro != null ? item.Libro.Titulo : "Título no disponible")</td>
+                            <td>@item.Cantidad</td>
+                            <td>@item.Precio_Unitario.ToString("F2")</td>
+                            <td>@((item.Cantidad * item.Precio_Unitario).ToString("F2"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No se encontraron detalles para este pedido.</p>
+        }
+    </div>
+
+    <div class="text-center mt-4">
+        @Html.ActionLink("Volver a la lista de libros", "ListaLibros", "Libro", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+//LoginController
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using BookStore.LogicaNegocio.Core;
+using BookStore.Entidades.Core;
+
+namespace BookStore.Cliente.Web.Controllers
+{
+    public class LoginController : Controller
+    {
+        private readonly ClienteLN clienteLN = new ClienteLN();
+        private readonly AdministradorLN adminLN = new AdministradorLN();
+
+        [HttpGet]
+        public ActionResult Index()
+        {
+            // Si ya hay sesión iniciada, redirigir al catálogo directamente
+            if (Session["usuario"] != null)
+            {
+                return RedirectToAction("ListaLibros", "Libro");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(string tipo, string nombre, string email, string contraseña)
+        {
+            if (tipo == "cliente")
+            {
+                var cliente = clienteLN.Login(nombre, email);
+                if (cliente != null)
+                {
+                    Session["usuario"] = cliente.Nombre; // o el campo que uses
+                    Session["rol"] = "Cliente";
+                    Session["idCliente"] = cliente.Id_Cliente;
+                    return RedirectToAction("ListaLibros", "Libro");
+                }
+            }
+            else if (tipo == "admin")
+            {
+                var admin = adminLN.Login(nombre, contraseña);
+                if (admin != null)
+                {
+                    Session["usuario"] = admin.Nombre; // o el campo correcto
+                    Session["rol"] = "Administrador";
+                    return RedirectToAction("ListaLibros", "Libro");
+                }
+            }
+
+            ViewBag.Error = "Credenciales incorrectas.";
+            return View();
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            Session.Abandon();
+            return RedirectToAction("Index", "Login");
+        }
+    }
+}
+
+//LibroController
+using BookStore.LogicaNegocio.Core;
+using BookStore.Entidades.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace BookStore.Cliente.Web.Controllers
+{
+    public class LibroController : Controller
+    {
+        private readonly LibroLN libroLN = new LibroLN();
+        private readonly PedidoLN pedidoLN = new PedidoLN(System.Configuration.ConfigurationManager.ConnectionStrings["SQL"].ConnectionString);
+
+        // =========================
+        // LISTA DE LIBROS (Cliente y Admin)
+        // =========================
+        public ActionResult ListaLibros()
+        {
+            if (Session["usuario"] == null)
+                return RedirectToAction("Index", "Login");
+
+            try
+            {
+                var lista = libroLN.ListarLibros();
+
+                // Si el usuario es cliente, solo mostrar libros con stock disponible
+                if (EsCliente())
+                    lista = lista.Where(l => l.Stock > 0).ToList();
+
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al cargar la lista de libros: " + ex.Message;
+                return View(new List<Libro>());
+            }
+        }
+
+        // =========================
+        // VER DETALLE DE LIBRO (Cliente)
+        // =========================
+        public ActionResult VerLibro(int idLibro)
+        {
+            if (!EsCliente() && !EsAdministrador())
+                return RedirectToAction("ListaLibros");
+
+            try
+            {
+                var libro = libroLN.ObtenerLibroPorId(idLibro);
+                if (libro == null)
+                {
+                    TempData["Error"] = "Libro no encontrado.";
+                    return RedirectToAction("ListaLibros");
+                }
+
+                return View(libro); // Se mostrará en la vista VerLibro.cshtml
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al cargar el libro: " + ex.Message;
+                return RedirectToAction("ListaLibros");
+            }
+        }
+
+        // =========================
+        // BUSCAR LIBRO (Cliente y Admin)
+        // =========================
+        [HttpGet]
+        public ActionResult BuscarLibro(string titulo)
+        {
+            if (Session["usuario"] == null)
+                return RedirectToAction("Index", "Login");
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(titulo))
+                {
+                    TempData["Error"] = "Debe ingresar un término de búsqueda.";
+                    return RedirectToAction("ListaLibros");
+                }
+
+                var resultados = libroLN.BuscarLibrosPorTitulo(titulo);
+                if (EsCliente())
+                    resultados = resultados.Where(l => l.Stock > 0).ToList();
+
+                return View("BuscarLibro", resultados); // mostrará resultados en BuscarLibro.cshtml
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al buscar libros: " + ex.Message;
+                return RedirectToAction("ListaLibros");
+            }
+        }
+
+        // =========================
+        // AGREGAR LIBRO (Administrador)
+        // =========================
+        [HttpGet]
+        public ActionResult AgregarLibro()
+        {
+            if (!EsAdministrador())
+                return RedirectToAction("ListaLibros");
+
+            return View(new Libro());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AgregarLibro(Libro libro)
+        {
+            if (!EsAdministrador())
+                return RedirectToAction("ListaLibros");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    bool agregado = libroLN.AgregarLibro(libro);
+                    TempData[agregado ? "Mensaje" : "Error"] = agregado
+                        ? "Libro agregado correctamente."
+                        : "No se pudo agregar el libro. Verifique los datos.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = "Error al agregar libro: " + ex.Message;
+                }
+            }
+            else
+            {
+                TempData["Error"] = "Los datos ingresados no son válidos.";
+            }
+
+            return RedirectToAction("ListaLibros");
+        }
+
+        // =========================
+        // AUMENTAR STOCK (Administrador)
+        // =========================
+        [HttpPost]
+        public ActionResult AumentarStock(int id, int cantidad)
+        {
+            if (!EsAdministrador())
+                return RedirectToAction("ListaLibros");
+
+            if (cantidad <= 0)
+            {
+                TempData["Error"] = "La cantidad debe ser mayor a 0.";
+                return RedirectToAction("ListaLibros");
+            }
+
+            try
+            {
+                bool actualizado = libroLN.AumentarStock(id, cantidad);
+                TempData[actualizado ? "Mensaje" : "Error"] = actualizado
+                    ? "Stock actualizado correctamente."
+                    : "No se pudo actualizar el stock. Verifique el ID del libro.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al actualizar stock: " + ex.Message;
+            }
+
+            return RedirectToAction("ListaLibros");
+        }
+
+        // =========================
+        // ELIMINAR LIBRO (Administrador)
+        // =========================
+        [HttpPost]
+        public ActionResult EliminarLibro(int id)
+        {
+            if (!EsAdministrador())
+                return RedirectToAction("ListaLibros");
+
+            try
+            {
+                bool eliminado = libroLN.EliminarLibroSiStockCero(id);
+                TempData[eliminado ? "Mensaje" : "Error"] = eliminado
+                    ? "Libro eliminado correctamente."
+                    : "No se pudo eliminar el libro. Verifique que su stock sea 0.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al eliminar libro: " + ex.Message;
+            }
+
+            return RedirectToAction("ListaLibros");
+        }
+
+        // =========================
+        // AGREGAR AL CARRITO (Cliente)
+        // =========================
+        [HttpPost]
+        public ActionResult AgregarAlCarrito(int idLibro, int cantidad)
+        {
+            var carrito = Session["carrito"] as List<PedidoDetalle> ?? new List<PedidoDetalle>();
+
+            var libro = libroLN.ObtenerLibroPorId(idLibro);
+            if (libro != null)
+            {
+                var existente = carrito.FirstOrDefault(x => x.Id_Libro == idLibro);
+                if (existente != null)
+                {
+                    existente.Cantidad += cantidad;
+                }
+                else
+                {
+                    carrito.Add(new PedidoDetalle
+                    {
+                        Id_Libro = libro.Id_Libro,
+                        Libro = libro,
+                        Cantidad = cantidad,
+                        Precio_Unitario = libro.Precio
+                    });
+                }
+
+                Session["carrito"] = carrito;
+                TempData["Mensaje"] = "Libro agregado al carrito.";
+            }
+
+            return RedirectToAction("VerCarrito", "Pedido");
+        }
+
+        // =========================
+        // VER CARRITO (Cliente)
+        // =========================
+        /*public ActionResult VerCarrito()
+        {
+            if (!EsCliente())
+                return RedirectToAction("ListaLibros");
+
+            var carrito = Session["carrito"] as List<PedidoDetalle> ?? new List<PedidoDetalle>();
+            return View("VerCarrito", carrito); // Asegura que use la vista VerCarrito.cshtml
+        }*/
+
+        // =========================
+        // CONFIRMAR PEDIDO (Cliente)
+        // =========================
+        [HttpPost]
+        public ActionResult ConfirmarPedido(string metodoPago)
+        {
+            if (!EsCliente())
+                return RedirectToAction("ListaLibros");
+
+            var carrito = Session["carrito"] as List<PedidoDetalle>;
+            if (carrito == null || carrito.Count == 0)
+            {
+                TempData["Error"] = "El carrito está vacío.";
+                return RedirectToAction("VerCarrito");
+            }
+
+            try
+            {
+                var pedido = new Pedido
+                {
+                    Id_Cliente = Convert.ToInt32(Session["idCliente"]),
+                    Metodo_Pago = metodoPago,
+                    Detalles = carrito
+                };
+
+                int idPedido = pedidoLN.CrearPedido(pedido);
+                Session["carrito"] = null;
+
+                TempData["Mensaje"] = $"Pedido #{idPedido} registrado correctamente.";
+                return RedirectToAction("ListaLibros");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al confirmar pedido: " + ex.Message;
+                return RedirectToAction("VerCarrito");
+            }
+        }
+
+        // =========================
+        // MÉTODOS PRIVADOS
+        // =========================
+        private bool EsAdministrador()
+        {
+            return Session["rol"] != null && Session["rol"].ToString() == "Administrador";
+        }
+
+        private bool EsCliente()
+        {
+            return Session["rol"] != null && Session["rol"].ToString() == "Cliente";
+        }
+    }
+}
+
+//PedidoController
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using BookStore.Entidades.Core;
+using BookStore.LogicaNegocio.Core;
+
+namespace BookStore.Cliente.Web.Controllers
+{
+    public class PedidoController : Controller
+    {
+        private readonly LibroLN libroLN = new LibroLN();
+        private readonly PedidoLN pedidoLN = new PedidoLN(System.Configuration.ConfigurationManager.ConnectionStrings["SQL"].ConnectionString); // Reemplaza con tu cadena de conexión real
+
+        // ==========================================================
+        // ===============  CARRITO DE COMPRAS  ====================
+        // ==========================================================
+
+        // ✅ Ver el carrito
+        public ActionResult VerCarrito()
+        {
+            var carrito = Session["carrito"] as List<PedidoDetalle> ?? new List<PedidoDetalle>();
+            return View(carrito);
+        }
+
+        // ✅ Agregar libro al carrito
+        /*[HttpPost]
+        public ActionResult AgregarAlCarrito(int idLibro, int cantidad = 1)
+        {
+            var libro = libroLN.ObtenerLibroPorId(idLibro);
+            if (libro == null)
+            {
+                TempData["Error"] = "El libro seleccionado no existe.";
+                return RedirectToAction("ListaLibros", "Libro");
+            }
+
+            if (cantidad <= 0)
+                cantidad = 1;
+
+            var carrito = Session["carrito"] as List<PedidoDetalle> ?? new List<PedidoDetalle>();
+
+            // Buscar si el libro ya está en el carrito
+            var existente = carrito.FirstOrDefault(x => x.Id_Libro == idLibro);
+            if (existente != null)
+            {
+                existente.Cantidad += cantidad;
+            }
+            else
+            {
+                carrito.Add(new PedidoDetalle
+                {
+                    Id_Libro = libro.Id_Libro,
+                    Cantidad = cantidad,
+                    Precio_Unitario = libro.Precio,
+                    Libro = libro
+                });
+            }
+
+            Session["carrito"] = carrito;
+            TempData["Mensaje"] = $"Se agregó '{libro.Titulo}' al carrito.";
+            return RedirectToAction("ListaLibros", "Libro");
+        }*/
+
+        // ✅ Eliminar libro del carrito (ahora con GET)
+        [HttpGet]
+        public ActionResult EliminarDelCarrito(int idLibro)
+        {
+            var carrito = Session["carrito"] as List<PedidoDetalle> ?? new List<PedidoDetalle>();
+
+            var item = carrito.FirstOrDefault(x => x.Id_Libro == idLibro);
+            if (item != null)
+            {
+                carrito.Remove(item);
+                Session["carrito"] = carrito;
+                TempData["Mensaje"] = "Libro eliminado del carrito.";
+            }
+            else
+            {
+                TempData["Mensaje"] = "El libro no se encontró en el carrito.";
+            }
+
+            return RedirectToAction("VerCarrito");
+        }
+
+        // ✅ Confirmar pedido (registrar)
+        [HttpPost]
+        public ActionResult ConfirmarPedido(string metodoPago)
+        {
+            // Verificar que el usuario esté logeado y sea cliente
+            if (Session["usuario"] == null || Session["rol"] == null || Session["rol"].ToString() != "Cliente")
+            {
+                TempData["Error"] = "Debe iniciar sesión como cliente para confirmar un pedido.";
+                return RedirectToAction("Index", "Login");
+            }
+
+            var carrito = Session["carrito"] as List<PedidoDetalle>;
+            if (carrito == null || carrito.Count == 0)
+            {
+                TempData["Error"] = "El carrito está vacío.";
+                return RedirectToAction("VerCarrito");
+            }
+
+            try
+            {
+                string nombreCliente = Session["usuario"].ToString();
+                int idCliente = Convert.ToInt32(Session["idCliente"]);
+
+                var pedido = new Pedido
+                {
+                    Id_Cliente = idCliente,
+                    Metodo_Pago = metodoPago,
+                    Detalles = carrito,
+                    Fecha_Pedido = DateTime.Now,
+                    Total = carrito.Sum(x => x.Cantidad * x.Precio_Unitario)
+                };
+
+                int idPedido = pedidoLN.CrearPedido(pedido);
+                pedido.Id_Pedido = idPedido;
+
+                // 🔹 Agregar cliente “a mano” para mostrar en la vista
+                pedido.Cliente = new BookStore.Entidades.Core.Cliente
+                {
+                    Id_Cliente = idCliente,
+                    Nombre = nombreCliente
+                };
+
+                // Limpiar carrito
+                Session["carrito"] = new List<PedidoDetalle>();
+
+                // Mostrar comprobante
+                return View("Comprobante", pedido);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al registrar el pedido: " + ex.Message;
+                return RedirectToAction("VerCarrito");
+            }
+        }
+    }
+}
+
