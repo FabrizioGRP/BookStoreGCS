@@ -1,0 +1,2460 @@
+BookStore+
+*************
+
+###carpeta css/ ###
+**admin.css**
+/* ===============================
+   ESTILOS DEL PANEL DE ADMINISTRACIÓN
+=============================== */
+
+/* 1. Layout General de Dos Columnas */
+.admin-main {
+    display: flex;
+    min-height: 80vh; /* Asegura que la barra lateral sea visible */
+    margin-top: -1px; /* Para que la sombra no se corte con el header */
+}
+
+/* 2. Barra Lateral (Sidebar) */
+.sidebar {
+    width: 250px;
+    background-color: #e0e0e0; /* Gris claro */
+    border-right: 1px solid #ccc;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    padding-top: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li a {
+    display: block;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+    font-weight: 500;
+    border-bottom: 1px solid #ccc;
+    transition: background-color 0.2s;
+}
+
+.sidebar li a:hover {
+    background-color: #d0d0d0;
+}
+
+/* Estilo para la opción activa (Gris oscuro) */
+.sidebar-active {
+    background-color: #b0b0b0 !important; 
+    color: #333 !important;
+    font-weight: bold;
+}
+
+/* 3. Contenido Principal */
+.admin-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: white; /* Fondo blanco */
+}
+
+.admin-content h2 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+
+/* 4. Estilos del Formulario de Trabajador */
+.form-trabajador-container {
+    max-width: 500px;
+}
+
+.form-trabajador-container label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-trabajador-container input[type="text"],
+.form-trabajador-container input[type="email"],
+.form-trabajador-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Grupo de Radio Buttons (Rango) */
+.form-group-radio {
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.form-group-radio label {
+    margin-bottom: 10px;
+}
+
+.radio-options {
+    display: flex;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.radio-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: normal;
+}
+
+/* 5. Botones de Acción (Guardar/Cancelar) */
+.form-actions {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.form-actions button {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.btn-guardar {
+    background-color: #ffcc00; /* Amarillo */
+    color: #333;
+}
+
+.btn-guardar:hover {
+    background-color: #e6b800;
+}
+
+.btn-cancelar {
+    background-color: #f0f0f0; /* Gris muy claro */
+    color: #555;
+}
+
+.btn-cancelar:hover {
+    background-color: #e0e0e0;
+}
+/* Estilo específico para el botón de Eliminar */
+.btn-eliminar {
+    background-color: crimson; /* Rojo */
+    color: white;
+}
+
+.btn-eliminar:hover {
+    background-color: darkred;
+}
+
+/* ===============================
+   ESTILOS DE GESTIÓN DE LIBROS (NUEVOS)
+=============================== */
+
+/* Botón Añadir Nuevo Libro */
+#addBookBtn {
+    padding: 10px 15px;
+    background-color: #4b0082;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* Tabla de Gestión */
+.book-management-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.book-management-table th,
+.book-management-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9em;
+}
+
+.book-management-table th {
+    background-color: #f2f2f2;
+    color: #4b0082;
+}
+
+.book-management-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Botones de acción dentro de la tabla */
+.btn-action {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-right: 5px;
+}
+
+.edit-btn {
+    background-color: #ffcc00;
+    color: #333;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Formulario Añadir/Modificar */
+#bookFormContainer {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fefefe;
+}
+
+#bookForm label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#bookForm input[type="text"],
+#bookForm input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#bookForm .btn-save, #bookForm .btn-cancel {
+    margin-top: 20px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#bookForm .btn-save {
+    background-color: #2ecc71;
+    color: white;
+}
+
+#bookForm .btn-cancel {
+    background-color: #bdc3c7;
+    color: #333;
+}
+
+**checkout.css**
+/* ===============================
+   ESTILOS ESPECÍFICOS DEL CHECKOUT
+   (checkout.css)
+=============================== */
+.checkout-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-container h1 {
+    text-align: center;
+    color: #4b0082;
+    margin-bottom: 30px;
+}
+
+.checkout-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.checkout-col {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.checkout-col h2 {
+    color: #ffcc00;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Estilos para Listas de Opciones y Productos */
+#paymentForm label,
+#deliveryForm label,
+.checkout-item-detail {
+    display: block;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+#paymentForm input[type="radio"],
+#deliveryForm input[type="radio"] {
+    margin-right: 10px;
+}
+
+.checkout-item-detail {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+}
+
+.checkout-footer {
+    text-align: center;
+    border-top: 2px solid #ffcc00;
+    padding-top: 20px;
+}
+
+#checkoutTotal {
+    font-size: 1.5rem;
+    color: #4b0082;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.btn-finalizar {
+    background-color: #ffcc00;
+    color: #4b0082;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-finalizar:hover {
+    background-color: #e6b800;
+}
+
+**profile.css**
+/* ===============================
+   ESTILOS ESPECÍFICOS DEL PERFIL
+   (profile.css)
+=============================== */
+
+.profile-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.profile-container h1 {
+    color: #4b0082;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-info-card,
+.profile-history-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+
+.profile-info-card h2,
+.profile-history-card h2 {
+    color: #4b0082;
+    border-bottom: 2px solid #ffcc00;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+/* Estilos de historial */
+.order-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.order-item h3 {
+    color: #333;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.order-date {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: normal;
+}
+
+.order-items-list {
+    list-style: disc;
+    margin-left: 20px;
+    padding-left: 0;
+    font-size: 0.95rem;
+}
+
+
+### carpeta data/ ###
+**books.json**
+[
+    {
+        "id": "book-01",
+        "title": "La sombra del viento",
+        "author": "Carlos Ruiz Zafón",
+        "price": 92.5,
+        "img": "img/libro1.jpg",
+        "summary": "Una historia sobre el poder de los libros, la amistad y los secretos que habitan en las sombras de Barcelona."
+    },
+    {
+        "id": "book-02",
+        "title": "Cien años de soledad",
+        "author": "Gabriel García Márquez",
+        "price": 85.0,
+        "img": "img/libro2.jpg",
+        "summary": "Una obra maestra del realismo mágico que narra la historia de la familia Buendía a lo largo de siete generaciones."
+    },
+    {
+        "id": "book-03",
+        "title": "Harry Potter y la piedra filosofal",
+        "author": "J.K. Rowling",
+        "price": 70.0,
+        "img": "img/libro3.jpg",
+        "summary": "El inicio de la saga mágica más famosa del mundo, donde un joven descubre su destino en Hogwarts."
+    },
+    {
+        "id": "book-04",
+        "title": "Percy Jackson y el Ladrón del Rayo",
+        "author": "Rick Riordan",
+        "price": 100,
+        "img": "img/libro04.jpg",
+        "summary": "Una historia sobre el poder de los libros, la amistad y los secretos que habitan en las sombras de Barcelona."
+    }
+]
+
+### carpeta js/ ###
+**admin.js**
+// ===============================
+// Archivo: admin.js 
+// ===============================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ----------------------------------------------------
+    // CONSTANTES Y VARIABLES GLOBALES
+    // ----------------------------------------------------
+    const BOOK_STORAGE_KEY = 'catalogo_libros'; 
+    const WORKER_STORAGE_KEY = 'trabajadores'; 
+    
+    let booksData = [];
+    let workersData = JSON.parse(localStorage.getItem(WORKER_STORAGE_KEY)) || [];
+    
+    // Elementos de Navegación y Secciones
+    const navLinks = document.querySelectorAll('.admin-sidebar-nav a');
+    const sections = document.querySelectorAll('.admin-section');
+    
+    // Formularios
+    const registerForm = document.getElementById('registerForm');
+    const bookForm = document.getElementById('bookForm');
+    
+    // Elementos de Modificación de Trabajador
+    const modifyWorkerForm = document.getElementById('modifyWorkerForm');
+    const cancelModifyBtn = document.getElementById('cancelModify');
+
+
+    // ----------------------------------------------------
+    // LÓGICA DE INICIALIZACIÓN Y NAVEGACIÓN
+    // ----------------------------------------------------
+    
+    function showSection(target) {
+        sections.forEach(section => {
+            section.style.display = 'none';
+        });
+        const activeSection = document.getElementById(`admin-${target}`);
+        if (activeSection) {
+            activeSection.style.display = 'block';
+            
+            navLinks.forEach(l => l.classList.remove('sidebar-active'));
+            document.querySelector(`[data-section="${target}"]`).classList.add('sidebar-active');
+
+            // Acciones específicas al cambiar de sección
+            if (target === 'books') {
+                loadBooks();
+            } else if (target === 'modify') {
+                renderWorkerList('modify');
+                hideModifyForm(); // Asegura que el formulario de modificación esté oculto
+            } else if (target === 'delete') {
+                renderWorkerList('delete');
+            }
+        }
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = e.target.dataset.section;
+            showSection(target);
+        });
+    });
+    
+    // Verificación de Acceso de Administrador
+    const userRole = localStorage.getItem('userRole');
+    if (userRole !== 'admin') {
+        alert("Acceso denegado. Solo administradores.");
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    // Muestra la primera sección al cargar
+    showSection('register'); 
+    
+    // ----------------------------------------------------
+    // GESTIÓN DE TRABAJADORES
+    // ----------------------------------------------------
+
+    function saveWorkers() {
+        localStorage.setItem(WORKER_STORAGE_KEY, JSON.stringify(workersData));
+    }
+    
+    // AÑADIR/REGISTRAR TRABAJADOR
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const newWorker = {
+                id: Date.now(),
+                nombre: document.getElementById('regNombre').value,
+                apellido: document.getElementById('regApellido').value,
+                correo: document.getElementById('regCorreo').value,
+                contrasena: document.getElementById('regContrasena').value, 
+                rango: document.querySelector('input[name="regRango"]:checked').value
+            };
+
+            workersData.push(newWorker);
+            saveWorkers();
+            alert(`Trabajador ${newWorker.nombre} registrado como ${newWorker.rango}.`);
+            registerForm.reset();
+        });
+    }
+
+    // RENDERIZAR LISTA DE TRABAJADORES (Para Modificar y Eliminar)
+    function renderWorkerList(actionType) {
+        const containerId = actionType === 'modify' ? 'modifyWorkerList' : 'deleteWorkerList';
+        const container = document.getElementById(containerId);
+        
+        if (!container) return;
+        
+        let listHTML = `<table class="worker-management-table">
+            <thead>
+                <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rango</th><th>Acción</th></tr>
+            </thead>
+            <tbody>`;
+
+        if (workersData.length === 0) {
+            listHTML += `<tr><td colspan="5">No hay trabajadores registrados.</td></tr>`;
+        } else {
+            workersData.forEach(worker => {
+                listHTML += `
+                    <tr>
+                        <td>${worker.id}</td>
+                        <td>${worker.nombre} ${worker.apellido}</td>
+                        <td>${worker.correo}</td>
+                        <td>${worker.rango}</td>
+                        <td>
+                            <button class="btn-${actionType}" data-id="${worker.id}">
+                                ${actionType === 'modify' ? 'Modificar' : 'Eliminar'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        listHTML += '</tbody></table>';
+        container.innerHTML = listHTML;
+        attachWorkerListListeners(actionType);
+    }
+    
+    function attachWorkerListListeners(actionType) {
+        document.querySelectorAll(`.btn-${actionType}`).forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.dataset.id);
+                const worker = workersData.find(w => w.id === id); 
+                
+                if (!worker) return;
+
+                if (actionType === 'modify') {
+                    showModifyForm(worker);
+                } else if (actionType === 'delete') {
+                    if (confirm(`¿Estás seguro de que quieres eliminar a ${worker.nombre} (${worker.rango})?`)) {
+                        workersData = workersData.filter(w => w.id !== id);
+                        saveWorkers();
+                        renderWorkerList(actionType);
+                        alert("Trabajador eliminado.");
+                    }
+                }
+            });
+        });
+    }
+    
+    // Modificación de Trabajador - Mostrar Formulario
+    function showModifyForm(worker) {
+        document.getElementById('modWorkerId').value = worker.id;
+        document.getElementById('modNombre').value = worker.nombre;
+        document.getElementById('modApellido').value = worker.apellido;
+        document.getElementById('modCorreo').value = worker.correo;
+        document.getElementById('modContrasena').value = ''; 
+        
+        document.querySelector(`input[name="modRango"][value="${worker.rango}"]`).checked = true;
+
+        document.getElementById('modifyWorkerList').style.display = 'none';
+        document.getElementById('modifyFormContainer').style.display = 'block';
+    }
+
+    // Modificación de Trabajador - Ocultar Formulario
+    function hideModifyForm() {
+        if (modifyWorkerForm) modifyWorkerForm.reset();
+        document.getElementById('modifyWorkerList').style.display = 'block';
+        document.getElementById('modifyFormContainer').style.display = 'none';
+    }
+    
+    // Listener para Cancelar Modificación
+    if (cancelModifyBtn) {
+        cancelModifyBtn.addEventListener('click', hideModifyForm);
+    }
+
+    // GUARDAR MODIFICACIÓN DE TRABAJADOR
+    if (modifyWorkerForm) {
+        modifyWorkerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const id = parseInt(document.getElementById('modWorkerId').value);
+            const index = workersData.findIndex(w => w.id === id);
+
+            if (index === -1) {
+                alert("Error: Trabajador no encontrado.");
+                return;
+            }
+
+            const newPassword = document.getElementById('modContrasena').value;
+            
+            const updatedWorker = {
+                id: id,
+                nombre: document.getElementById('modNombre').value,
+                apellido: document.getElementById('modApellido').value,
+                correo: document.getElementById('modCorreo').value,
+                rango: document.querySelector('input[name="modRango"]:checked').value,
+                // Solo actualizar la contraseña si se proporcionó una nueva
+                contrasena: newPassword ? newPassword : workersData[index].contrasena
+            };
+
+            workersData[index] = updatedWorker;
+            saveWorkers();
+            alert(`Trabajador ${updatedWorker.nombre} actualizado exitosamente.`);
+            
+            hideModifyForm();
+            renderWorkerList('modify'); // Recargar lista
+        });
+    }
+
+
+    // ----------------------------------------------------
+    // GESTIÓN DE LIBROS 
+    // ----------------------------------------------------
+    
+    // Función para obtener los libros (desde localStorage o books.json)
+    async function getBooks() {
+        const storedBooks = localStorage.getItem(BOOK_STORAGE_KEY);
+        if (storedBooks) {
+            return JSON.parse(storedBooks);
+        } else {
+            const response = await fetch('data/books.json');
+            const jsonBooks = await response.json();
+            localStorage.setItem(BOOK_STORAGE_KEY, JSON.stringify(jsonBooks));
+            return jsonBooks;
+        }
+    }
+
+    async function loadBooks() {
+        try {
+            booksData = await getBooks();
+            renderBookTable(booksData);
+        } catch (error) {
+            document.getElementById('bookListManagement').innerHTML = `<p>Error al cargar los datos: ${error.message}</p>`;
+        }
+    }
+
+    function saveBooks() {
+        localStorage.setItem(BOOK_STORAGE_KEY, JSON.stringify(booksData));
+    }
+
+    function renderBookTable(books) {
+        const container = document.getElementById('bookListManagement');
+        let tableHTML = `
+            <table class="book-management-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Precio</th>
+                        <th>Categoría</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        books.forEach(book => {
+            tableHTML += `
+                <tr>
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>S/ ${book.price.toFixed(2)}</td>
+                    <td>${book.category || 'N/A'}</td>
+                    <td>
+                        <button class="btn-action edit-btn" data-id="${book.id}">Modificar</button>
+                        <button class="btn-action delete-btn" data-id="${book.id}">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tableHTML += `
+                </tbody>
+            </table>
+        `;
+        container.innerHTML = tableHTML;
+        attachBookTableListeners();
+    }
+
+    function attachBookTableListeners() {
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.dataset.id);
+                editBook(id);
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.dataset.id);
+                deleteBook(id);
+            });
+        });
+    }
+    
+    document.getElementById('addBookBtn').addEventListener('click', () => {
+        showBookForm();
+    });
+
+    document.getElementById('cancelBookForm').addEventListener('click', (e) => {
+        e.preventDefault();
+        hideBookForm();
+    });
+
+    function editBook(id) {
+        const book = booksData.find(b => b.id === id);
+        if (!book) return;
+
+        document.getElementById('bookId').value = book.id;
+        document.getElementById('bookTitle').value = book.title;
+        document.getElementById('bookAuthor').value = book.author;
+        document.getElementById('bookPrice').value = book.price;
+        document.getElementById('bookCategory').value = book.category || '';
+        document.getElementById('bookImg').value = book.img;
+        
+        showBookForm();
+    }
+
+    function deleteBook(id) {
+        if (confirm("¿Estás seguro de que quieres eliminar este libro del catálogo?")) {
+            booksData = booksData.filter(b => b.id !== id);
+            saveBooks();
+            loadBooks(); 
+            alert(`Libro con ID ${id} eliminado.`);
+        }
+    }
+
+    function showBookForm() {
+        document.getElementById('bookFormContainer').style.display = 'block';
+        document.getElementById('bookListManagement').style.display = 'none';
+        document.getElementById('addBookBtn').style.display = 'none';
+    }
+    
+    function hideBookForm() {
+        document.getElementById('bookForm').reset();
+        document.getElementById('bookId').value = ''; 
+        document.getElementById('bookFormContainer').style.display = 'none';
+        document.getElementById('bookListManagement').style.display = 'block';
+        document.getElementById('addBookBtn').style.display = 'block';
+    }
+
+    if (bookForm) {
+        bookForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('bookId').value;
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const price = parseFloat(document.getElementById('bookPrice').value);
+            const category = document.getElementById('bookCategory').value;
+            const img = document.getElementById('bookImg').value;
+
+            const newBook = {
+                title,
+                author,
+                price,
+                category,
+                img,
+            };
+
+            if (id) {
+                const index = booksData.findIndex(b => b.id === parseInt(id));
+                if (index !== -1) {
+                    booksData[index] = { ...booksData[index], ...newBook, id: parseInt(id) };
+                    alert(`Libro "${title}" modificado exitosamente.`);
+                }
+            } else {
+                const maxId = booksData.length > 0 ? Math.max(...booksData.map(b => b.id)) : 0;
+                newBook.id = maxId + 1;
+                booksData.push(newBook);
+                alert(`Libro "${title}" añadido al catálogo.`);
+            }
+
+            saveBooks();
+            loadBooks(); 
+            hideBookForm();
+        });
+    }
+});
+
+**carrito.js**
+// ===============================
+// Archivo: carrito.js 
+// ===============================
+
+// Función auxiliar para obtener el historial
+function getOrderHistory() {
+    return JSON.parse(localStorage.getItem('orderHistory')) || [];
+}
+
+// Función auxiliar para guardar el historial
+function saveOrderHistory(history) {
+    localStorage.setItem('orderHistory', JSON.stringify(history));
+}
+
+function renderCarrito() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const carritoContainer = document.getElementById("carritoItems");
+    const totalPrecio = document.getElementById("totalPrecio");
+    let total = 0;
+
+    carritoContainer.innerHTML = "";
+
+    if (carrito.length === 0) {
+        carritoContainer.innerHTML = "<p>Tu carrito está vacío. ¡Empieza a comprar!</p>";
+        totalPrecio.textContent = "S/ 0.00";
+        return;
+    }
+
+    carrito.forEach((libro, index) => {
+        const subtotal = libro.price * libro.cantidad;
+        total += subtotal;
+
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "carrito-item";
+        itemDiv.dataset.id = libro.id;
+        
+        itemDiv.innerHTML = `
+            <img src="${libro.img}" alt="${libro.title}">
+            <div>
+                <h3>${libro.title}</h3>
+                <p>Autor: ${libro.author}</p>
+                <p>Precio: S/ ${libro.price.toFixed(2)}</p>
+                <p>Cantidad: ${libro.cantidad}</p>
+                <p><strong>Subtotal: S/ ${subtotal.toFixed(2)}</strong></p>
+                <button class="eliminarBtn" data-index="${index}">Eliminar</button>
+            </div>
+        `;
+        carritoContainer.appendChild(itemDiv);
+    });
+
+    totalPrecio.textContent = `S/ ${total.toFixed(2)}`;
+
+    // Manejar eliminación
+    document.querySelectorAll(".eliminarBtn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const index = parseInt(e.target.dataset.index);
+            eliminarItem(index);
+        });
+    });
+}
+
+function eliminarItem(index) {
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    
+    // Elimina 1 elemento en la posición 'index'
+    carrito.splice(index, 1); 
+    
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    renderCarrito(); // Volver a renderizar la lista
+    actualizarContadorCarrito(); // De cart-utils.js
+}
+
+
+// --- LÓGICA PARA INICIAR EL CHECKOUT (sustituye a la antigua finalizarCompra) ---
+function iniciarCheckout() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+    if (carrito.length === 0) {
+        alert("El carrito está vacío. No hay nada que comprar.");
+        return;
+    }
+
+    if (!isLoggedIn) {
+        alert("Debes iniciar sesión para completar la compra.");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Redirigir a la nueva página de confirmación
+    window.location.href = 'checkout-confirm.html'; 
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderCarrito();
+    
+    const vaciarBtn = document.getElementById("vaciarBtn");
+    // Usamos el ID actualizado para el botón de acción
+    const completarCompraBtn = document.getElementById("completarCompraBtn"); 
+    
+    if (vaciarBtn) {
+        vaciarBtn.addEventListener("click", () => {
+            if (confirm("¿Estás seguro de que quieres vaciar el carrito?")) {
+                localStorage.removeItem("carrito");
+                renderCarrito();
+                actualizarContadorCarrito();
+            }
+        });
+    }
+
+    if (completarCompraBtn) { 
+        completarCompraBtn.addEventListener("click", iniciarCheckout);
+    }
+});
+
+**cart-utils.js**
+// ===============================
+// Archivo: cart-utils.js
+// Funciones esenciales para la gestión y contador del carrito.
+// ===============================
+
+function actualizarContadorCarrito() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    // Suma la propiedad 'cantidad' de todos los ítems
+    const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+
+    const contador = document.getElementById("cart-count");
+    if (contador) contador.textContent = total;
+}
+
+function animarContador() {
+    const contador = document.getElementById("cart-count");
+    if (contador) {
+        // Agrega una clase CSS para hacer la animación
+        contador.classList.add("cart-bump"); 
+        setTimeout(() => contador.classList.remove("cart-bump"), 400);
+    }
+}
+
+function addToCart(book) {
+    // Obtener el carrito actual o inicializar uno vacío
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    
+    // Buscar si el libro ya existe en el carrito usando el 'id'
+    const existingItem = carrito.find(item => item.id === book.id);
+
+    if (existingItem) {
+        // Si ya existe, aumentar la cantidad
+        existingItem.cantidad += 1;
+    } else {
+        // Si no existe, añadir el libro al final con cantidad 1
+        carrito.push({
+            ...book, // Copia todas las propiedades del libro (id, title, price, etc.)
+            cantidad: 1 // Añade la propiedad cantidad
+        });
+    }
+
+    // Guardar el carrito actualizado en localStorage
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    
+    // Actualizar la interfaz (contador y animación)
+    actualizarContadorCarrito();
+    animarContador();
+}
+
+// Hacemos que la función esté disponible globalmente
+window.addToCart = addToCart; 
+
+// Ejecutar al cargar cualquier página
+document.addEventListener("DOMContentLoaded", actualizarContadorCarrito);
+
+// Escuchar cambios en localStorage (otras pestañas)
+window.addEventListener("storage", actualizarContadorCarrito);
+
+**checkout.js**
+// ===============================
+// Archivo: checkout.js
+// Lógica de confirmación y finalización de compra.
+// ===============================
+
+// Función auxiliar para obtener el historial
+function getOrderHistory() {
+    return JSON.parse(localStorage.getItem('orderHistory')) || [];
+}
+
+// Función auxiliar para guardar el historial
+function saveOrderHistory(history) {
+    localStorage.setItem('orderHistory', JSON.stringify(history));
+}
+
+function renderCheckoutDetails() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const itemsList = document.getElementById("checkoutItemsList");
+    const totalEl = document.getElementById("checkoutTotal");
+    let total = 0;
+
+    if (carrito.length === 0) {
+        alert("Tu carrito está vacío. Redirigiendo a la página principal.");
+        window.location.href = 'index.html';
+        return;
+    }
+
+    itemsList.innerHTML = '';
+    carrito.forEach(libro => {
+        const subtotal = libro.price * libro.cantidad;
+        total += subtotal;
+
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "checkout-item-detail";
+        itemDiv.innerHTML = `
+            <span>${libro.title} (${libro.cantidad} unid.)</span>
+            <strong>S/ ${subtotal.toFixed(2)}</strong>
+        `;
+        itemsList.appendChild(itemDiv);
+    });
+
+    totalEl.textContent = `S/ ${total.toFixed(2)}`;
+}
+
+// --- FUNCIÓN PRINCIPAL DE FINALIZACIÓN ---
+function finalizarCompra() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const currentUser = localStorage.getItem('currentUser');
+    
+    // Obtener la Forma de Pago y el Método de Entrega seleccionados
+    const paymentOption = document.querySelector('input[name="payment"]:checked');
+    const deliveryOption = document.querySelector('input[name="delivery"]:checked');
+
+    if (!paymentOption || !deliveryOption) {
+        alert("Por favor, selecciona una Forma de Pago y un Método de Entrega.");
+        return;
+    }
+    
+    // VALIDACIÓN: Asegura que el usuario esté logueado antes de finalizar
+    if (!currentUser) {
+        alert("Debes iniciar sesión para completar la compra.");
+        window.location.href = 'login.html';
+        return;
+    }
+
+
+    // 1. Crear el objeto del nuevo pedido con las opciones de envío/pago
+    const newOrder = {
+        id: Date.now(), 
+        username: currentUser,
+        date: new Date().toLocaleDateString('es-PE'),
+        paymentMethod: paymentOption.value,     // <-- NUEVO CAMPO
+        deliveryMethod: deliveryOption.value,   // <-- NUEVO CAMPO
+        items: carrito 
+    };
+
+    // 2. Guardar el pedido en el Historial de Pedidos
+    const history = getOrderHistory();
+    history.push(newOrder);
+    saveOrderHistory(history);
+
+    // 3. Vaciar el carrito actual
+    localStorage.removeItem("carrito");
+    
+    // 4. Notificar y redirigir
+    alert(`¡Compra finalizada! Tu pedido (${newOrder.id}) será entregado via ${deliveryOption.value}.`);
+    // Asegurarse de actualizar el contador del carrito en el header (función de cart-utils.js)
+    if (typeof actualizarContadorCarrito === 'function') {
+        actualizarContadorCarrito();
+    }
+    window.location.href = 'profile.html';
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Cargar el detalle de los items
+    renderCheckoutDetails();
+
+    // 2. Asignar listener al botón de finalizar
+    const finalizarBtn = document.getElementById("finalizarCompraBtn");
+    if (finalizarBtn) {
+        finalizarBtn.addEventListener("click", finalizarCompra);
+    }
+});
+
+**detalle-libro.js**
+// ===============================
+// Archivo: detalle-libro.js
+// Carga la información de un libro y conecta la compra.
+// ===============================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    fetch("data/books.json")
+        .then(res => res.json())
+        .then(libros => {
+            const libro = libros.find(l => l.id === id);
+            if (!libro) {
+                document.querySelector("main").innerHTML = "<p>Libro no encontrado</p>";
+                return;
+            }
+
+            // Asignar valores al HTML
+            document.getElementById("detalleImg").src = libro.img;
+            document.getElementById("detalleTitulo").textContent = libro.title;
+            document.getElementById("detalleAutor").textContent = libro.author;
+            document.getElementById("detalleDescripcion").textContent = libro.summary;
+            document.getElementById("detallePrecio").textContent = `S/ ${libro.price.toFixed(2)}`;
+
+            // Botón "Añadir al carrito"
+            const btn = document.getElementById("addCartBtn");
+            btn.addEventListener("click", () => {
+                // Llama a la función centralizada de cart-utils.js
+                addToCart(libro); 
+                alert(`"${libro.title}" se añadió al carrito 🛒`);
+            });
+        })
+        .catch(() => {
+            document.querySelector("main").innerHTML = "<p>Error al cargar los datos del libro.</p>";
+        });
+});
+
+**login.js**
+// ===============================
+// Archivo: login.js (VERSIÓN FINAL Y CORRECTA)
+// Simulación de inicio de sesión con roles
+// ===============================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    const loginMessage = document.getElementById('loginMessage');
+
+    // ESTO ES CLAVE: Ambos usuarios deben estar definidos aquí.
+    const SIMULATED_USERS = [
+        { username: 'user', password: '123', role: 'user' },      // <-- PERFIL DE USUARIO
+        { username: 'admin', password: '456', role: 'admin' }     // <-- PERFIL DE ADMINISTRADOR
+    ];
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Busca si existe un usuario con las credenciales ingresadas
+            const authenticatedUser = SIMULATED_USERS.find(
+                u => u.username === username && u.password === password
+            );
+
+            if (authenticatedUser) {
+                // Simulación exitosa: Guardar el estado de login y el rol
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('currentUser', username);
+                localStorage.setItem('userRole', authenticatedUser.role);
+                
+                alert(`Bienvenido, ${username}! (Rol: ${authenticatedUser.role.toUpperCase()})`);
+                
+                // Redirigir basado en el rol
+                if (authenticatedUser.role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } else {
+                loginMessage.textContent = 'Usuario o contraseña incorrectos.';
+            }
+        });
+    }
+});
+
+**profile-status.js**
+// ===============================
+// Archivo: profile-status.js (VERSIÓN CON REDIRECCIÓN FORZADA)
+// ===============================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const profileLink = document.getElementById('profileLink');
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const currentUser = localStorage.getItem('currentUser');
+    const userRole = localStorage.getItem('userRole');
+    const profileIconDiv = document.getElementById('profile-icon');
+    
+    if (isLoggedIn && currentUser && profileLink && profileIconDiv) {
+        
+        // 1. Mostrar el nombre
+        profileLink.textContent = `Hola, ${currentUser} 👋`; 
+        
+        // 2. Definir la URL de destino
+        const destinationUrl = (userRole === 'admin') ? 'admin.html' : 'profile.html';
+
+        // 3. Establecer el href (como respaldo)
+        profileLink.href = destinationUrl; 
+        
+        // 4. AÑADIR ESCUCHADOR PARA FORZAR LA REDIRECCIÓN
+        profileLink.addEventListener('click', (e) => {
+            // Evitamos que el enlace haga su acción por defecto (navegar por el href)
+            e.preventDefault(); 
+            
+            // Redirigimos la ventana directamente, asegurando la navegación
+            window.location.href = destinationUrl;
+        });
+        
+        // 5. Crear el botón de Logout (el resto del código es el mismo)
+        const logoutBtn = document.createElement('button');
+        logoutBtn.textContent = 'Salir';
+        logoutBtn.className = 'logout-btn';
+        
+        logoutBtn.onclick = () => {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('carrito');
+            window.location.reload();
+        };
+        
+        profileIconDiv.appendChild(logoutBtn);
+    } 
+    // Si no está logueado, se queda con el href="login.html" (el valor por defecto)
+});
+
+**profile.js**
+// ===============================
+// Archivo: profile.js 
+// ===============================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // CORRECCIÓN: Usar los IDs presentes en tu profile.html
+    const profileUsernameEl = document.getElementById('profileUsername'); 
+    const profileRoleEl = document.getElementById('profileRole'); 
+    
+    const currentUser = localStorage.getItem('currentUser');
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const userRole = localStorage.getItem('userRole');
+
+    // 1. Verificación de Login
+    if (!isLoggedIn || !currentUser) {
+        alert("Debes iniciar sesión para ver esta página.");
+        window.location.href = 'login.html'; 
+        return;
+    }
+
+    // 2. Mostrar Información de Cuenta
+    if (profileUsernameEl) {
+        profileUsernameEl.textContent = currentUser; // Muestra solo el nombre
+    }
+    if (profileRoleEl) {
+        profileRoleEl.textContent = userRole || 'Usuario'; // Muestra el rol
+    }
+
+    // 3. Renderizar Historial de Pedidos
+    renderOrderHistory();
+});
+
+
+function getOrderHistory() {
+    return JSON.parse(localStorage.getItem('orderHistory')) || [];
+}
+
+
+function renderOrderHistory() {
+    // CORRECCIÓN: Usar el ID correcto de tu HTML
+    const historyListEl = document.getElementById('orderHistoryList'); 
+    const currentUser = localStorage.getItem('currentUser');
+    
+    const allOrders = getOrderHistory();
+    const userOrders = allOrders.filter(order => order.username === currentUser);
+    userOrders.reverse();
+
+    if (!historyListEl) return;
+
+    historyListEl.innerHTML = '';
+
+    if (userOrders.length === 0) {
+        historyListEl.innerHTML = '<p>Aún no has realizado ningún pedido. ¡Empieza a comprar!</p>';
+        return;
+    }
+
+    userOrders.forEach((order, index) => {
+        const orderDiv = document.createElement('div');
+        orderDiv.className = 'order-item'; 
+
+        const total = order.items.reduce((sum, item) => sum + (item.price * item.cantidad), 0);
+        
+        orderDiv.innerHTML = `
+            <h3>Pedido #${allOrders.length - index} <span class="order-date">${order.date}</span></h3>
+            <p><strong>Total:</strong> S/ ${total.toFixed(2)}</p>
+            
+            <div class="order-details-summary">
+                <span>Método de Pago: <strong>${order.paymentMethod || 'No especificado'}</strong></span>
+                <span>Entrega: <strong>${order.deliveryMethod || 'No especificado'}</strong></span>
+            </div>
+
+            <p style="margin-top: 10px;">Artículos:</p>
+            <ul class="order-items-list">
+                ${order.items.map(item => `
+                    <li>${item.title} (${item.cantidad}x) - S/ ${(item.price * item.cantidad).toFixed(2)}</li>
+                `).join('')}
+            </ul>
+        `;
+        historyListEl.appendChild(orderDiv);
+    });
+}
+
+**script.js**
+// ===============================
+// Archivo: script.js
+// Muestra el catálogo, implementa la búsqueda y la compra rápida.
+// ===============================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const bookList = document.getElementById("bookList");
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+
+    let todosLosLibros = []; // Variable para guardar el catálogo completo
+
+    // Cargar lista de libros desde JSON
+    fetch("data/books.json")
+        .then(response => response.json())
+        .then(libros => {
+            todosLosLibros = libros; // Almacenar el catálogo
+            mostrarLibros(todosLosLibros);
+
+            // Listener para el botón de búsqueda
+            searchBtn.addEventListener("click", () => {
+                const query = searchInput.value.toLowerCase();
+                const filtrados = todosLosLibros.filter(l =>
+                    l.title.toLowerCase().includes(query) ||
+                    l.author.toLowerCase().includes(query)
+                );
+                mostrarLibros(filtrados);
+            });
+        })
+        .catch(() => {
+            bookList.innerHTML = "<p>Error al cargar el catálogo de libros.</p>";
+        });
+
+    function mostrarLibros(lista) {
+        bookList.innerHTML = "";
+        if (lista.length === 0) {
+            bookList.innerHTML = "<p>No se encontraron libros que coincidan con la búsqueda.</p>";
+            return;
+        }
+
+        lista.forEach(libro => {
+            const card = document.createElement("div");
+            card.className = "book-card";
+            card.dataset.id = libro.id;
+            
+            // --- HTML DE LA TARJETA CON BOTÓN DE COMPRA ---
+            card.innerHTML = `
+                <img src="${libro.img}" alt="${libro.title}">
+                <h3>${libro.title}</h3>
+                <p>Autor: ${libro.author}</p>
+                <p class="price-tag">S/ ${libro.price.toFixed(2)}</p>
+                <button class="add-cart-btn" data-id="${libro.id}">Añadir al Carrito 🛒</button> 
+            `;
+            // ---------------------------------------------
+
+            // 1. Evento para ir al detalle (toda la tarjeta excepto el botón)
+            card.addEventListener("click", (e) => {
+                // Si el elemento clickeado NO es el botón de carrito, redirigir
+                if (!e.target.classList.contains('add-cart-btn')) { 
+                    window.location.href = `detalle-libro.html?id=${libro.id}`;
+                }
+            });
+
+            // 2. Evento del botón de carrito (función de compra)
+            const cartBtn = card.querySelector('.add-cart-btn');
+            cartBtn.addEventListener("click", () => {
+                // Llama a la función global del archivo cart-utils.js
+                addToCart(libro); 
+                alert(`"${libro.title}" se añadió al carrito.`); // <-- ALERT NATIVO
+            });
+            
+            bookList.appendChild(card);
+        });
+    }
+});
+
+
+////////admin.html//////////
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administración - BookStore</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="css/admin.css" /> 
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">📚 BookStore</a>
+        <nav class="header-nav-right">
+            <ul>
+                <li><a href="index.html">Volver a la Tienda</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        
+        <aside class="sidebar">
+            <nav class="admin-sidebar-nav">
+                <ul>
+                    <li><a href="#" data-section="register">Registrar Trabajador</a></li>
+                    <li><a href="#" data-section="modify">Modificar Trabajador</a></li>
+                    <li><a href="#" data-section="delete">Eliminar Trabajador</a></li>
+                    
+                    <li><a href="#" data-section="books">Gestión de Libros</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="admin-content">
+            
+            <section id="admin-register" class="admin-section">
+                <h2>Registrar Trabajador</h2>
+                <div class="form-trabajador-container">
+                    <form id="registerForm">
+                        <label for="regNombre">Nombre</label>
+                        <input type="text" id="regNombre" required>
+                        
+                        <label for="regApellido">Apellido</label>
+                        <input type="text" id="regApellido" required>
+                        
+                        <label for="regCorreo">Correo</label>
+                        <input type="email" id="regCorreo" required>
+                        
+                        <label for="regContrasena">Contraseña</label>
+                        <input type="password" id="regContrasena" required>
+                        
+                        <div class="form-group-radio">
+                            <label>Rango</label>
+                            <div class="radio-options">
+                                <label><input type="radio" name="regRango" value="admin" required> Administrador</label>
+                                <label><input type="radio" name="regRango" value="vendedor"> Vendedor</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-guardar">Guardar</button>
+                            <button type="button" class="btn-cancelar">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section id="admin-modify" class="admin-section" style="display:none;">
+                <h2>Modificar Trabajador</h2>
+                
+                <div id="modifyWorkerList">
+                    <p>Cargando lista de trabajadores para modificar...</p>
+                </div>
+
+                <div id="modifyFormContainer" style="display:none;" class="form-card">
+                    <h3>Datos del Trabajador a Modificar</h3>
+                    <form id="modifyWorkerForm">
+                        <input type="hidden" id="modWorkerId">
+                        
+                        <label for="modNombre">Nombre:</label>
+                        <input type="text" id="modNombre" required>
+                        
+                        <label for="modApellido">Apellido:</label>
+                        <input type="text" id="modApellido" required>
+                        
+                        <label for="modCorreo">Correo:</label>
+                        <input type="email" id="modCorreo" required>
+                        
+                        <label for="modContrasena">Contraseña (dejar vacío para no cambiar):</label>
+                        <input type="password" id="modContrasena">
+                        
+                        <div class="form-group-radio">
+                            <label>Rango:</label>
+                            <div class="radio-options">
+                                <label><input type="radio" name="modRango" value="admin" required> Administrador</label>
+                                <label><input type="radio" name="modRango" value="vendedor"> Vendedor</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-guardar">Actualizar Datos</button>
+                            <button type="button" id="cancelModify" class="btn-cancelar">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            
+            <section id="admin-delete" class="admin-section" style="display:none;">
+                <h2>Eliminar Trabajador</h2>
+                
+                <div id="deleteWorkerList">
+                    <p>Cargando lista de trabajadores para eliminar...</p>
+                </div>
+            </section>
+
+
+            <section id="admin-books" class="admin-section" style="display:none;">
+                <h2>Gestión de Catálogo</h2>
+                <button id="addBookBtn" class="btn-primary">Añadir Nuevo Libro</button>
+                
+                <div id="bookListManagement">
+                    <p>Cargando libros...</p>
+                </div>
+                
+                <div id="bookFormContainer" style="display:none;" class="form-card">
+                    <h3>Añadir/Modificar Libro</h3>
+                    <form id="bookForm">
+                        <input type="hidden" id="bookId">
+                        
+                        <label for="bookTitle">Título:</label>
+                        <input type="text" id="bookTitle" required>
+                        
+                        <label for="bookAuthor">Autor:</label>
+                        <input type="text" id="bookAuthor" required>
+                        
+                        <label for="bookPrice">Precio (S/):</label>
+                        <input type="number" id="bookPrice" step="0.01" required>
+                        
+                        <label for="bookCategory">Categoría:</label>
+                        <input type="text" id="bookCategory" required>
+                        
+                        <label for="bookImg">URL de Imagen:</label>
+                        <input type="text" id="bookImg" required>
+                        
+                        <button type="submit" class="btn-save">Guardar Libro</button>
+                        <button type="button" id="cancelBookForm" class="btn-cancel">Cancelar</button>
+                    </form>
+                </div>
+            </section>
+            
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 BookStore - Panel de Administración</p>
+    </footer>
+
+    <script src="js/cart-utils.js"></script> 
+    <script src="js/profile-status.js"></script>
+    <script src="js/admin.js"></script> </body>
+</html>
+
+
+////////////carrito.html//////////////////
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <<header>
+    <a href="index.html" class="logo">📚 BookStore</a>
+
+    <div class="user-actions">
+        
+        <nav class="header-nav-right">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="carrito.html">Carrito 🛒 <span id="cart-count">0</span></a></li>
+            </ul>
+        </nav>
+        
+        <div class="new-search-container">
+            <input type="text" placeholder="Buscar libro..." id="searchInput">
+            <button id="searchBtn">🔍</button> 
+        </div>
+
+        <div id="profile-icon">
+            <a href="login.html" id="profileLink">👤</a> 
+        </div>
+    </div>
+</header>
+
+    <main>
+        <section class="carrito-container">
+            <h1>Tu Carrito de Compras</h1>
+            <div id="carritoItems"></div> 
+
+            <div class="carrito-total">
+                <p>Total: <span id="totalPrecio">S/ 0.00</span></p> 
+                <div>
+                    <button id="vaciarBtn">Vaciar carrito</button> 
+                    <button id="completarCompraBtn">Completar compra</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 BookStore - Todos los derechos reservados</p>
+    </footer>
+
+   <script src="js/cart-utils.js"></script> 
+    <script src="js/profile-status.js"></script>
+    <script src="js/carrito.js"></script>
+</body>
+</html>
+
+
+//////////checkout-confirm.html/////////
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirmar Compra - BookStore</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="css/checkout.css" />
+</head>
+<body>
+
+    <header>
+        </header>
+
+    <main>
+        <div class="checkout-container">
+            <h1>Confirmar y Finalizar Compra</h1>
+            
+            <div class="checkout-grid">
+                <div class="checkout-col">
+                    <h2>Lista de Productos</h2>
+                    <div id="checkoutItemsList">
+                        </div>
+                </div>
+                
+                <div class="checkout-col">
+                    <h2>Forma de Pago</h2>
+                    <form id="paymentForm">
+                        <label><input type="radio" name="payment" value="Tarjeta de crédito" required> Tarjeta de crédito</label>
+                        <label><input type="radio" name="payment" value="Tarjeta de débito"> Tarjeta de débito</label>
+                        <label><input type="radio" name="payment" value="Transferencia bancaria"> Transferencia bancaria</label>
+                        <label><input type="radio" name="payment" value="Pago contra entrega"> Pago contra entrega</label>
+                        <label><input type="radio" name="payment" value="PayPal"> PayPal</label>
+                    </form>
+                </div>
+                
+                <div class="checkout-col">
+                    <h2>Método de Entrega</h2>
+                    <form id="deliveryForm">
+                        <label><input type="radio" name="delivery" value="Recojo en tienda" required> Recojo en tienda</label>
+                        <label><input type="radio" name="delivery" value="Entrega a domicilio"> Entrega a domicilio</label>
+                        <label><input type="radio" name="delivery" value="Punto de recojo"> Punto de recojo</label>
+                    </form>
+                </div>
+            </div>
+
+            <div class="checkout-footer">
+                <p>Total a Pagar: <strong id="checkoutTotal">S/ 0.00</strong></p>
+                <button id="finalizarCompraBtn" class="btn-finalizar">FINALIZAR COMPRA</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        </footer>
+
+    <script src="js/cart-utils.js"></script>
+    <script src="js/profile-status.js"></script>
+    <script src="js/checkout.js"></script> </body>
+</html>
+
+/////////////////detalle-libro.html////////////////
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle del Libro</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+ <header>
+    <a href="index.html" class="logo">📚 BookStore</a>
+
+    <div class="user-actions">
+        
+        <nav class="header-nav-right">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="carrito.html">Carrito 🛒 <span id="cart-count">0</span></a></li>
+            </ul>
+        </nav>
+        
+        <div class="new-search-container">
+            <input type="text" placeholder="Buscar libro..." id="searchInput">
+            <button id="searchBtn">🔍</button> 
+        </div>
+
+        <div id="profile-icon">
+            <a href="login.html" id="profileLink">👤</a> 
+        </div>
+    </div>
+</header>
+
+  <main>
+    <div class="detalle-container">
+      <div class="detalle-imagen">
+        <img id="detalleImg" src="" alt="Portada del libro">
+      </div>
+
+      <div class="detalle-info">
+        <h2 id="detalleTitulo"></h2>
+        <p class="autor" id="detalleAutor"></p>
+        <p id="detalleDescripcion"></p>
+        <p class="precio" id="detallePrecio"></p>
+        <button id="addCartBtn">Añadir al carrito 🛒</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 BookStore - Todos los derechos reservados</p>
+  </footer>
+
+  <script src="js/cart-utils.js"></script> 
+    <script src="js/profile-status.js"></script>
+    <script src="js/detalle.js"></script>
+</body>
+</html>
+
+//////////////index.html/////////////
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookStore - Inicio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">📚 BookStore</a>
+
+    <div class="user-actions">
+        
+        <nav class="header-nav-right">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="carrito.html">Carrito 🛒 <span id="cart-count">0</span></a></li>
+            </ul>
+        </nav>
+        
+        <div class="new-search-container">
+            <input type="text" placeholder="Buscar libro..." id="searchInput">
+            <button id="searchBtn">🔍</button> 
+        </div>
+
+        <div id="profile-icon">
+            <a href="login.html" id="profileLink">👤</a> 
+        </div>
+    </div>
+</header>
+
+  <section class="banner">
+    <img src="img/banner.jpg" alt="Banner">
+    <!-- <div class="banner-text">
+      <h1>Bienvenido a BookStore</h1>
+      <p>Tu tienda de libros favorita</p>
+    </div> -->
+  </section>
+
+  <main>
+    <h2>Los más vendidos</h2>
+    <div id="bookList" class="book-list"></div>
+  </main>
+
+  <footer>
+    <p>© 2025 BookStore - Todos los derechos reservados</p>
+  </footer>
+
+  <script src="js/cart-utils.js"></script> 
+    <script src="js/profile-status.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
+
+/////////////login.html///////////////
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión - BookStore</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <header>
+    <a href="index.html" class="logo">📚 BookStore</a>
+
+    <div class="user-actions">
+        
+        <nav class="header-nav-right">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="carrito.html">Carrito 🛒 <span id="cart-count">0</span></a></li>
+            </ul>
+        </nav>
+        
+        <div class="new-search-container">
+            <input type="text" placeholder="Buscar libro..." id="searchInput">
+            <button id="searchBtn">🔍</button> 
+        </div>
+
+        <div id="profile-icon">
+            <a href="login.html" id="profileLink">👤</a> 
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="login-form-container">
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit">Entrar</button>
+            </form>
+            <p id="loginMessage"></p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 BookStore - Todos los derechos reservados</p>
+    </footer>
+
+    <script src="js/cart-utils.js"></script> 
+    <script src="js/profile-status.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>
+
+////////////////profile.html/////////////
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Perfil - BookStore</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="css/profile.css" /> </head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">📚 BookStore</a>
+        <div class="user-actions">
+            <nav class="header-nav-right">
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="carrito.html">Carrito 🛒 <span id="cart-count">0</span></a></li>
+                </ul>
+            </nav>
+            <div class="new-search-container">
+                <input type="text" placeholder="Buscar libro..." id="searchInput">
+                <button id="searchBtn">🔍</button> 
+            </div>
+            <div id="profile-icon">
+                <a href="login.html" id="profileLink">👤</a> 
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="profile-container">
+            <h1>Bienvenido a tu Perfil</h1>
+            
+            <section class="profile-info-card">
+                <h2>Información de Cuenta</h2>
+                <p><strong>Usuario:</strong> <span id="profileUsername">Cargando...</span></p>
+                <p><strong>Rol:</strong> <span id="profileRole">Cargando...</span></p>
+            </section>
+            
+            <section class="profile-history-card">
+                <h2>Historial de Pedidos</h2>
+                <div id="orderHistoryList">
+                    <p>No tienes pedidos anteriores.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 BookStore - Todos los derechos reservados</p>
+    </footer>
+
+    <script src="js/cart-utils.js"></script> 
+    <script src="js/profile-status.js"></script>
+    <script src="js/profile.js"></script>
+</html>
+
+
+////////////style.css/////////////
+/* ===============================
+    ESTILOS GENERALES
+=============================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+    color: #7e50d2;
+}
+
+/* ===============================
+    HEADER
+=============================== */
+header {
+    background-color: #cbec3a;
+    color: rgb(18, 18, 18);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    flex-wrap: wrap;
+}
+
+header .logo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+}
+
+/* Contenedor principal de todas las acciones de la derecha */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1; 
+    justify-content: flex-end; 
+}
+
+/* Estilo para la nueva navegación derecha (Inicio y Carrito) */
+.header-nav-right ul {
+    list-style: none;
+    display: flex;
+    gap: 15px; 
+}
+
+.header-nav-right a {
+    color: rgb(12, 12, 12);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.header-nav-right a:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------------- */
+/* Contenedor de Búsqueda (Gris y Grande) */
+/* ------------------------------------- */
+.new-search-container {
+    flex-grow: 1;
+    max-width: 400px; 
+    background-color: #ffffff; /* Fondo gris de la barra */
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px; 
+}
+
+.new-search-container input {
+    flex-grow: 1;
+    padding: 8px 15px;
+    border: none;
+    background: transparent;
+    color: white; 
+    outline: none;
+    font-size: 1rem;
+}
+
+.new-search-container button {
+    background: none;
+    border: none;
+    color: white; 
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.2rem;
+    margin-left: 5px;
+}
+
+/* ------------------------------------- */
+/* Ícono de Perfil */
+/* ------------------------------------- */
+
+#profile-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#profile-icon a {
+    font-size: 1.1rem; 
+    color: #4b0082; 
+    background-color: #e0e0e0; 
+    border-radius: 20px;
+    padding: 10px 10px; 
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#profile-icon a:hover {
+    background-color: #c9c9c9;
+}
+
+.logout-btn {
+    background-color: #ffcc00 !important;
+    color: #4b0082 !important;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+
+/* ===============================
+    BANNER
+=============================== */
+.banner {
+    position: relative;
+    text-align: center;
+}
+
+.banner img {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+}
+
+.banner-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px 25px;
+    border-radius: 10px;
+}
+
+/* ===============================
+    LIBROS (HOMEPAGE)
+=============================== */
+main {
+    padding: 20px;
+}
+
+.book-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajustado a 200px para mejor vista */
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.book-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; /* Añadido para mejor control del botón */
+    flex-direction: column;
+}
+
+.book-card:hover {
+    transform: scale(1.03); /* Ligeramente menos agresivo que 1.05 */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.book-card img {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+}
+
+.book-card h3 {
+    font-size: 1.1rem;
+    padding: 10px;
+}
+
+.book-card p {
+    padding: 0 10px;
+    color: #4b0082;
+    font-weight: normal;
+}
+
+.book-card .price-tag {
+    font-weight: bold;
+    color: #008000;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.book-card .add-cart-btn {
+    background-color: #ffcc00;
+    border: none;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+    border-radius: 0 0 10px 10px;
+    margin-top: auto; /* Empuja el botón hacia abajo */
+}
+
+.book-card .add-cart-btn:hover {
+    background-color: #e6b800;
+}
+
+/* ===============================
+    DETALLE DE LIBRO
+=============================== */
+.detalle-container {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    flex-wrap: wrap;
+    background-color: white;
+    border-radius: 15px;
+    margin: 30px auto; /* Usar auto para centrar */
+    max-width: 1000px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.detalle-imagen img {
+    width: 250px;
+    border-radius: 10px;
+}
+
+.detalle-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.detalle-info h2 {
+    font-size: 1.8rem;
+    color: #4b0082;
+    margin-bottom: 10px;
+}
+
+.detalle-info .autor {
+    color: #555;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.detalle-info .precio {
+    color: #008000;
+    font-size: 1.3rem;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+button#addCartBtn {
+    background-color: #4b0082;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+button#addCartBtn:hover {
+    background-color: #3a0065;
+}
+
+/* ===============================
+    CARRITO
+=============================== */
+.carrito-container {
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    margin: 30px auto;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.carrito-container h1 {
+    text-align: center;
+    color: #4b0082;
+    margin-bottom: 20px;
+}
+
+.carrito-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.carrito-item img {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.carrito-item h3 {
+    color: #4b0082;
+    font-size: 1.1rem;
+}
+
+.carrito-item p {
+    margin-top: 3px;
+}
+
+.carrito-item .eliminarBtn {
+    background-color: crimson;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 8px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.carrito-item .eliminarBtn:hover {
+    background-color: darkred;
+}
+
+.carrito-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.carrito-total button {
+    background-color: #4b0082;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.carrito-total button:hover {
+    background-color: #3a0065;
+}
+
+/* ===============================
+    PÁGINA DE LOGIN
+=============================== */
+.login-form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.login-form-container h2 {
+    text-align: center;
+    color: #4b0082;
+    margin-bottom: 25px;
+}
+
+.login-form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.login-form-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-form-container button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #4b0082;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.2s;
+}
+
+.login-form-container button[type="submit"]:hover {
+    background-color: #3a0065;
+}
+
+#loginMessage {
+    color: crimson;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+/* ===============================
+    FOOTER
+=============================== */
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #cbec3a;
+    color: rgb(3, 3, 3);
+    margin-top: 30px;
+    font-size: 0.9rem;
+}
+
+/* ===============================
+    CONTADOR Y RESPONSIVE
+=============================== */
+#cart-count {
+    background-color: #ffcc00;
+    color: #4b0082;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    margin-left: 5px;
+    transition: transform 0.3s ease;
+}
+
+/* Animación al añadir producto */
+.cart-bump {
+    transform: scale(1.3);
+}
+
+@media (max-width: 900px) {
+    /* Ajuste para que los elementos del header no se amontonen */
+    header {
+        padding: 10px 15px;
+    }
+    
+    .user-actions {
+        flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea */
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .new-search-container {
+        order: 1; /* Coloca la barra de búsqueda primero en la nueva línea */
+        max-width: 100%;
+        margin-right: 0;
+    }
+
+    .header-nav-right {
+        order: 2; /* Coloca la navegación en la segunda posición */
+    }
+
+    #profile-icon {
+        order: 3; /* Coloca el perfil al final */
+    }
+
+    .book-list {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .detalle-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .detalle-imagen img {
+        width: 60%;
+    }
+
+    .carrito-total {
+        flex-direction: column;
+        align-items: center;
+    }
+}
