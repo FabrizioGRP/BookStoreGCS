@@ -213,7 +213,10 @@ namespace BookStore.AccesoDatos.Core
                         Precio = (decimal)dr["Precio"],
                         Stock = (int)dr["Stock"],
                         Categoria = dr["Categoria"] == DBNull.Value ? "" : dr["Categoria"].ToString(),
-                        Editorial = dr["Editorial"] == DBNull.Value ? "" : dr["Editorial"].ToString()
+                        Editorial = dr["Editorial"] == DBNull.Value ? "" : dr["Editorial"].ToString(),
+
+                        // NUEVO CAMPO
+                        Formato = dr["Formato"] == DBNull.Value ? "" : dr["Formato"].ToString()
                     });
                 }
             }
@@ -225,8 +228,10 @@ namespace BookStore.AccesoDatos.Core
         {
             using (SqlConnection cn = new SqlConnection(cadenaConexion))
             {
-                string query = @"INSERT INTO Libro (Titulo, Autor, ISBN, Precio, Stock, Categoria, Editorial)
-                                 VALUES (@Titulo, @Autor, @ISBN, @Precio, @Stock, @Categoria, @Editorial)";
+                string query = @"INSERT INTO Libro 
+                                (Titulo, Autor, ISBN, Precio, Stock, Categoria, Editorial, Formato)
+                                 VALUES 
+                                (@Titulo, @Autor, @ISBN, @Precio, @Stock, @Categoria, @Editorial, @Formato)";
                 SqlCommand cmd = new SqlCommand(query, cn);
 
                 cmd.Parameters.AddWithValue("@Titulo", libro.Titulo);
@@ -236,6 +241,9 @@ namespace BookStore.AccesoDatos.Core
                 cmd.Parameters.AddWithValue("@Stock", libro.Stock);
                 cmd.Parameters.AddWithValue("@Categoria", libro.Categoria ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Editorial", libro.Editorial ?? (object)DBNull.Value);
+
+                // NUEVO PARAMETRO
+                cmd.Parameters.AddWithValue("@Formato", libro.Formato ?? (object)DBNull.Value);
 
                 cn.Open();
                 int filas = cmd.ExecuteNonQuery();
@@ -281,7 +289,10 @@ namespace BookStore.AccesoDatos.Core
                         Precio = (decimal)dr["Precio"],
                         Stock = (int)dr["Stock"],
                         Categoria = dr["Categoria"].ToString(),
-                        Editorial = dr["Editorial"].ToString()
+                        Editorial = dr["Editorial"].ToString(),
+
+                        // NUEVO CAMPO
+                        Formato = dr["Formato"] == DBNull.Value ? "" : dr["Formato"].ToString()
                     };
                 }
             }
@@ -326,7 +337,10 @@ namespace BookStore.AccesoDatos.Core
                         Precio = (decimal)dr["Precio"],
                         Stock = (int)dr["Stock"],
                         Categoria = dr["Categoria"].ToString(),
-                        Editorial = dr["Editorial"].ToString()
+                        Editorial = dr["Editorial"].ToString(),
+
+                        // NUEVO CAMPO
+                        Formato = dr["Formato"] == DBNull.Value ? "" : dr["Formato"].ToString()
                     });
                 }
             }
@@ -347,6 +361,59 @@ namespace BookStore.AccesoDatos.Core
                 int filas = cmd.ExecuteNonQuery();
                 return filas > 0;
             }
+        }
+
+        public List<Libro> BuscarLibrosPorEditorial(string editorial)
+        {
+            List<Libro> lista = new List<Libro>();
+
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "SELECT * FROM Libro WHERE Editorial LIKE @Editorial";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@Editorial", "%" + editorial + "%");
+
+                cn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    lista.Add(new Libro
+                    {
+                        Id_Libro = (int)dr["Id_Libro"],
+                        Titulo = dr["Titulo"].ToString(),
+                        Autor = dr["Autor"].ToString(),
+                        ISBN = dr["ISBN"].ToString(),
+                        Precio = (decimal)dr["Precio"],
+                        Stock = (int)dr["Stock"],
+                        Categoria = dr["Categoria"].ToString(),
+                        Editorial = dr["Editorial"].ToString(),
+                        Formato = dr["Formato"] == DBNull.Value ? "" : dr["Formato"].ToString()
+                    });
+                }
+            }
+
+            return lista;
+        }
+
+        public List<string> ListarEditoriales()
+        {
+            List<string> editoriales = new List<string>();
+
+            using (SqlConnection cn = new SqlConnection(cadenaConexion))
+            {
+                string query = "SELECT DISTINCT Editorial FROM Libro WHERE Editorial IS NOT NULL AND Editorial <> ''";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cn.Open();
+
+                SqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    editoriales.Add(dr["Editorial"].ToString());
+                }
+            }
+
+            return editoriales;
         }
     }
 }
@@ -539,6 +606,10 @@ namespace BookStore.LogicaNegocio.Core
             if (libros.Any(l => l.ISBN == libro.ISBN))
                 return false;
 
+            // NUEVA VALIDACIÓN OPCIONAL
+            if (string.IsNullOrWhiteSpace(libro.Formato))
+                libro.Formato = "Físico"; // valor por defecto si no se especifica
+
             return libroDA.AgregarLibro(libro);
         }
 
@@ -583,6 +654,19 @@ namespace BookStore.LogicaNegocio.Core
                 return false;
 
             return libroDA.DisminuirStock(idLibro, cantidad);
+        }
+
+        public List<Libro> BuscarLibrosPorEditorial(string editorial)
+        {
+            if (string.IsNullOrWhiteSpace(editorial))
+                return new List<Libro>();
+
+            return libroDA.BuscarLibrosPorEditorial(editorial);
+        }
+
+        public List<string> ListarEditoriales()
+        {
+            return libroDA.ListarEditoriales();
         }
     }
 }
@@ -704,6 +788,8 @@ namespace BookStore.Entidades.Core
         public int Stock { get; set; }
         public string Categoria { get; set; }
         public string Editorial { get; set; }
+
+        public string Formato { get; set; }
         public bool Disponible => Stock > 0; // propiedad de solo lectura
         public int CantidadSeleccionada { get; set; } // cantidad elegida por el cliente
     }
@@ -846,6 +932,23 @@ else
                 </div>
             </div>
 
+            <!-- NUEVO CAMPO: FORMATO -->
+            <div class="form-group">
+                @Html.LabelFor(model => model.Formato, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Formato,
+                        new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Físico", Value = "Físico" },
+                            new SelectListItem { Text = "Digital", Value = "Digital" }
+                        },
+                        "-- Seleccione formato --",
+                        new { @class = "form-control" })
+
+                    @Html.ValidationMessageFor(model => model.Formato, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
             <div class="form-group mt-3">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Guardar libro" class="btn btn-success" />
@@ -866,13 +969,49 @@ else
 
 <h2>Buscar Libros</h2>
 
-<div class="form-inline mb-3">
-    @using (Html.BeginForm("BuscarLibro", "Libro", FormMethod.Get))
+<!-- BUSQUEDA POR TÍTULO Y FILTRO POR EDITORIAL (Solo cliente) -->
+<div class="d-flex mb-3 gap-3">
+
+    <!-- BUSCAR POR TÍTULO -->
+    @using (Html.BeginForm("BuscarLibro", "Libro", FormMethod.Get,
+            new { @class = "d-flex align-items-center gap-2" }))
     {
-        <input type="text" name="titulo" class="form-control mr-2" placeholder="Buscar por título o autor..." value="@Request["titulo"]" />
+        <input type="text" name="titulo"
+               class="form-control"
+               placeholder="Buscar por título..."
+               value="@Request["titulo"]"
+               style="max-width: 300px;" />
+
         <button type="submit" class="btn btn-primary">Buscar</button>
     }
+
+    <!-- FILTRAR POR EDITORIAL -->
+    @using (Html.BeginForm("BuscarPorEditorial", "Libro", FormMethod.Get,
+            new { @class = "d-flex align-items-center gap-2" }))
+    {
+        <select name="editorial" class="form-control" style="max-width: 250px;">
+            <option value="">-- Seleccionar editorial --</option>
+
+            @foreach (var editorial in ViewBag.Editoriales as List<string>)
+            {
+                <option value="@editorial"
+                        @(Request["editorial"] == editorial ? "selected" : "")>
+                    @editorial
+                </option>
+            }
+        </select>
+
+        <button type="submit" class="btn btn-secondary">Filtrar</button>
+    }
 </div>
+
+<!-- MENSAJE SI SE ESTÁ FILTRANDO POR EDITORIAL -->
+@if (!string.IsNullOrEmpty(Request["editorial"]))
+{
+    <div class="alert alert-info">
+        Mostrando libros de la editorial: <strong>@Request["editorial"]</strong>
+    </div>
+}
 
 @if (Model != null && Model.Any())
 {
@@ -883,6 +1022,7 @@ else
                 <th>Autor</th>
                 <th>Categoría</th>
                 <th>Editorial</th>
+                <th>Formato</th>
                 <th>Precio</th>
                 <th>Stock</th>
                 <th></th>
@@ -896,10 +1036,13 @@ else
                     <td>@item.Autor</td>
                     <td>@item.Categoria</td>
                     <td>@item.Editorial</td>
+                    <td>@item.Formato</td>
                     <td>@item.Precio.ToString("C")</td>
                     <td>@(item.Disponible ? "Disponible" : "Agotado")</td>
                     <td>
-                        @Html.ActionLink("Ver Detalles", "VerLibro", "Libro", new { idLibro = item.Id_Libro }, new { @class = "btn btn-info btn-sm" })
+                        @Html.ActionLink("Ver Detalles", "VerLibro", "Libro",
+                            new { idLibro = item.Id_Libro },
+                            new { @class = "btn btn-info btn-sm" })
                     </td>
                 </tr>
             }
@@ -912,7 +1055,8 @@ else
 }
 
 <div class="mt-4">
-    @Html.ActionLink("← Volver a la lista", "ListaLibros", "Libro", null, new { @class = "btn btn-secondary" })
+    @Html.ActionLink("← Volver a la lista", "ListaLibros", "Libro",
+        null, new { @class = "btn btn-secondary" })
 </div>
 
 //Vista ListaLibros
@@ -924,8 +1068,8 @@ else
 }
 
 <h2>Lista de libros</h2>
-<p>ROL ACTUAL: @Session["rol"]</p> <!-- Comentar esta línea luego -->
-<!-- Mostrar mensajes -->
+<p>ROL ACTUAL: @Session["rol"]</p>
+
 @if (TempData["Mensaje"] != null)
 {
     <div class="alert alert-success">@TempData["Mensaje"]</div>
@@ -935,9 +1079,6 @@ else
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
-<!-- ============================= -->
-<!-- SECCIÓN SUPERIOR DE BOTONES -->
-<!-- ============================= -->
 @if (rol == "Administrador")
 {
     <p>
@@ -946,27 +1087,53 @@ else
 }
 else if (rol == "Cliente")
 {
-    <div class="d-flex mb-3 align-items-center gap-2">
-        @using (Html.BeginForm("BuscarLibro", "Libro", FormMethod.Get, new { @class = "d-flex align-items-center gap-2 flex-grow-1" }))
+    <div class="d-flex mb-3 align-items-center gap-3">
+
+        <!-- Busqueda por título -->
+        @using (Html.BeginForm("BuscarLibro", "Libro", FormMethod.Get,
+            new { @class = "d-flex align-items-center gap-2 flex-grow-1" }))
         {
-            <input type="text" name="titulo" class="form-control" placeholder="Buscar por título..." style="max-width: 350px;" />
+            <input type="text" name="titulo"
+                   class="form-control"
+                   placeholder="Buscar por título..."
+                   style="max-width: 350px;" />
+
             <button type="submit" class="btn btn-primary">Buscar</button>
         }
 
-        @Html.ActionLink("Ver carrito", "VerCarrito", "Pedido", null, new { @class = "btn btn-warning ms-2" })
+        <!-- NUEVO FILTRO: Busqueda por Editorial -->
+        @using (Html.BeginForm("BuscarPorEditorial", "Libro", FormMethod.Get,
+            new { @class = "d-flex align-items-center gap-2" }))
+        {
+            <select name="editorial" class="form-control" style="max-width: 250px;">
+                <option value="">-- Seleccione editorial --</option>
+                @foreach (var e in ViewBag.Editoriales as List<string>)
+                {
+                    <option value="@e">@e</option>
+                }
+            </select>
+
+            <button type="submit" class="btn btn-secondary">Filtrar</button>
+        }
+
+        @Html.ActionLink("Ver carrito", "VerCarrito", "Pedido", null, new { @class = "btn btn-warning" })
     </div>
 }
 
-<!-- ============================= -->
-<!-- TABLA DE LIBROS -->
-<!-- ============================= -->
 <table class="table table-bordered">
     <thead class="table-light">
         <tr>
             <th>Título</th>
             <th>Autor</th>
+
+            <!-- NUEVA COLUMNA -->
+            <th>Categoría</th>
+            <th>Editorial</th>
+
             <th>Precio</th>
             <th>Stock</th>
+            <th>Formato</th>
+
             @if (rol == "Administrador")
             {
                 <th style="width: 220px;">Acciones</th>
@@ -977,14 +1144,21 @@ else if (rol == "Cliente")
             }
         </tr>
     </thead>
+
     <tbody>
         @foreach (var libro in Model)
         {
             <tr>
                 <td>@libro.Titulo</td>
                 <td>@libro.Autor</td>
+
+                <!-- NUEVO CAMPO -->
+                <td>@libro.Categoria</td>
+                <td>@libro.Editorial</td>
+
                 <td>@libro.Precio.ToString("F2")</td>
                 <td>@libro.Stock</td>
+                <td>@libro.Formato</td>
 
                 @if (rol == "Administrador")
                 {
@@ -993,14 +1167,16 @@ else if (rol == "Cliente")
                             @using (Html.BeginForm("AumentarStock", "Libro", FormMethod.Post, new { @class = "d-flex align-items-center gap-2" }))
                             {
                                 @Html.Hidden("id", libro.Id_Libro)
-                                <input type="number" name="cantidad" min="1" class="form-control form-control-sm w-25" placeholder="+" />
+                                <input type="number" name="cantidad" min="1"
+                                       class="form-control form-control-sm w-25" placeholder="+" />
                                 <input type="submit" value="Aumentar" class="btn btn-primary btn-sm" />
                             }
 
                             @using (Html.BeginForm("EliminarLibro", "Libro", FormMethod.Post, new { @class = "ms-2" }))
                             {
                                 @Html.Hidden("id", libro.Id_Libro)
-                                <input type="submit" value="Eliminar" class="btn btn-danger btn-sm"
+                                <input type="submit" value="Eliminar"
+                                       class="btn btn-danger btn-sm"
                                        onclick="return confirm('¿Seguro que deseas eliminar este libro (solo si stock = 0)?');" />
                             }
                         </div>
@@ -1010,15 +1186,16 @@ else if (rol == "Cliente")
                 {
                     <td>
                         <div class="d-flex align-items-center gap-2">
-                            <!-- Botón Ver -->
-                            @Html.ActionLink("Ver", "VerLibro", "Libro", new { idLibro = libro.Id_Libro }, new { @class = "btn btn-info btn-sm" })
+                            @Html.ActionLink("Ver", "VerLibro", "Libro",
+                                new { idLibro = libro.Id_Libro },
+                                new { @class = "btn btn-info btn-sm" })
 
                             @using (Html.BeginForm("AgregarAlCarrito", "Libro", FormMethod.Post))
                             {
                                 @Html.Hidden("idLibro", libro.Id_Libro)
 
                                 <input type="number" name="cantidad" value="1" min="1" max="@libro.Stock"
-                                       class="form-control form-control-sm text-center w-25" placeholder="+" />
+                                       class="form-control form-control-sm text-center w-25" />
 
                                 <input type="submit" value="Agregar al carrito" class="btn btn-success btn-sm" />
                             }
@@ -1059,16 +1236,19 @@ else if (rol == "Cliente")
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-4">
-            <!-- Si luego agregas imágenes, aquí podrías mostrar la portada -->
             <img src="~/Content/Images/default-book.png" alt="Portada del libro" class="img-fluid rounded shadow-sm" />
         </div>
 
         <div class="col-md-8">
             <h2 class="text-primary mb-3">@Model.Titulo</h2>
             <h5 class="text-muted">Autor: @Model.Autor</h5>
+
             <p><strong>ISBN:</strong> @Model.ISBN</p>
             <p><strong>Categoría:</strong> @Model.Categoria</p>
             <p><strong>Editorial:</strong> @Model.Editorial</p>
+
+            <!-- NUEVO CAMPO -->
+            <p><strong>Formato:</strong> @Model.Formato</p>
 
             <h4 class="text-success mt-3">
                 Precio: S/. @Model.Precio
@@ -1095,7 +1275,9 @@ else if (rol == "Cliente")
 
                     <div class="form-group">
                         <label for="cantidad">Cantidad:</label>
-                        <input type="number" name="cantidad" id="cantidad" class="form-control w-25" value="1" min="1" max="@Model.Stock" required />
+                        <input type="number" name="cantidad" id="cantidad"
+                               class="form-control w-25"
+                               value="1" min="1" max="@Model.Stock" required />
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-2">
@@ -1203,6 +1385,8 @@ else
             <tr>
                 <th>Título</th>
                 <th>Autor</th>
+                <th>Editorial</th>
+                <th>Formato</th>
                 <th>Precio Unitario (S/)</th>
                 <th>Cantidad</th>
                 <th>Subtotal (S/)</th>
@@ -1217,6 +1401,8 @@ else
                 <tr>
                     <td>@(item.Libro != null ? item.Libro.Titulo : "Título no disponible")</td>
                     <td>@(item.Libro != null ? item.Libro.Autor : "Autor no disponible")</td>
+                    <td>@(item.Libro != null ? item.Libro.Editorial : "Editorial no disponible")</td>
+                    <td>@(item.Libro != null ? item.Libro.Formato : "Formato no disponible")</td>
                     <td>@item.Precio_Unitario.ToString("0.00")</td>
                     <td>@item.Cantidad</td>
                     <td>@subtotal.ToString("0.00")</td>
@@ -1230,7 +1416,7 @@ else
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="4" class="text-end fw-bold">Total:</td>
+                <td colspan="6" class="text-end fw-bold">Total:</td>
                 <td colspan="2" class="fw-bold">S/ @total.ToString("0.00")</td>
             </tr>
         </tfoot>
@@ -1260,6 +1446,7 @@ else
         </form>
     </div>
 }
+
 //Vista Comprobante
 @model BookStore.Entidades.Core.Pedido
 
@@ -1305,6 +1492,8 @@ else
                 <thead class="thead-dark">
                     <tr>
                         <th>Título</th>
+                        <th>Editorial</th>
+                        <th>Formato</th>
                         <th>Cantidad</th>
                         <th>Precio Unitario (S/)</th>
                         <th>Subtotal (S/)</th>
@@ -1315,6 +1504,8 @@ else
                     {
                         <tr>
                             <td>@(item.Libro != null ? item.Libro.Titulo : "Título no disponible")</td>
+                            <td>@(item.Libro != null ? item.Libro.Editorial : "Editorial no disponible")</td>
+                            <td>@(item.Libro != null ? item.Libro.Formato : "Formato no disponible")</td>
                             <td>@item.Cantidad</td>
                             <td>@item.Precio_Unitario.ToString("F2")</td>
                             <td>@((item.Cantidad * item.Precio_Unitario).ToString("F2"))</td>
@@ -1432,6 +1623,15 @@ namespace BookStore.Cliente.Web.Controllers
                 if (EsCliente())
                     lista = lista.Where(l => l.Stock > 0).ToList();
 
+                var editoriales = lista
+                    .Where(l => !string.IsNullOrWhiteSpace(l.Editorial))
+                    .Select(l => l.Editorial.Trim())
+                    .Distinct()
+                    .OrderBy(e => e)
+                    .ToList();
+
+                ViewBag.Editoriales = editoriales;
+
                 return View(lista);
             }
             catch (Exception ex)
@@ -1488,6 +1688,7 @@ namespace BookStore.Cliente.Web.Controllers
                 if (EsCliente())
                     resultados = resultados.Where(l => l.Stock > 0).ToList();
 
+                ViewBag.Editoriales = libroLN.ListarEditoriales();
                 return View("BuscarLibro", resultados); // mostrará resultados en BuscarLibro.cshtml
             }
             catch (Exception ex)
@@ -1506,7 +1707,13 @@ namespace BookStore.Cliente.Web.Controllers
             if (!EsAdministrador())
                 return RedirectToAction("ListaLibros");
 
-            return View(new Libro());
+            // Inicializar Formato con un valor por defecto (opcional)
+            var libro = new Libro
+            {
+                Formato = "Físico"
+            };
+
+            return View(libro);
         }
 
         [HttpPost]
@@ -1515,6 +1722,13 @@ namespace BookStore.Cliente.Web.Controllers
         {
             if (!EsAdministrador())
                 return RedirectToAction("ListaLibros");
+
+            // VALIDACIÓN DEL NUEVO CAMPO FORMATO
+            if (string.IsNullOrWhiteSpace(libro.Formato))
+            {
+                TempData["Error"] = "Debe seleccionar un formato (Físico o Digital).";
+                return View(libro);
+            }
 
             if (ModelState.IsValid)
             {
@@ -1533,6 +1747,7 @@ namespace BookStore.Cliente.Web.Controllers
             else
             {
                 TempData["Error"] = "Los datos ingresados no son válidos.";
+                return View(libro);
             }
 
             return RedirectToAction("ListaLibros");
@@ -1676,6 +1891,39 @@ namespace BookStore.Cliente.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult BuscarPorEditorial(string editorial)
+        {
+            if (Session["usuario"] == null)
+                return RedirectToAction("Index", "Login");
+
+            // Validar que SOLO un cliente pueda usar este filtro
+            if (!EsCliente())
+                return RedirectToAction("ListaLibros");
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(editorial))
+                {
+                    TempData["Error"] = "Debe ingresar una editorial.";
+                    return RedirectToAction("ListaLibros");
+                }
+
+                var resultados = libroLN.BuscarLibrosPorEditorial(editorial);
+
+                // Clientes solo ven libros con stock disponible
+                resultados = resultados.Where(l => l.Stock > 0).ToList();
+                ViewBag.Editoriales = libroLN.ListarEditoriales();
+
+                return View("BuscarLibro", resultados);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al buscar por editorial: " + ex.Message;
+                return RedirectToAction("ListaLibros");
+            }
+        }
+
         // =========================
         // MÉTODOS PRIVADOS
         // =========================
@@ -1711,14 +1959,14 @@ namespace BookStore.Cliente.Web.Controllers
         // ===============  CARRITO DE COMPRAS  ====================
         // ==========================================================
 
-        // ✅ Ver el carrito
+        //Ver el carrito
         public ActionResult VerCarrito()
         {
             var carrito = Session["carrito"] as List<PedidoDetalle> ?? new List<PedidoDetalle>();
             return View(carrito);
         }
 
-        // ✅ Agregar libro al carrito
+        //Agregar libro al carrito
         /*[HttpPost]
         public ActionResult AgregarAlCarrito(int idLibro, int cantidad = 1)
         {
@@ -1756,7 +2004,7 @@ namespace BookStore.Cliente.Web.Controllers
             return RedirectToAction("ListaLibros", "Libro");
         }*/
 
-        // ✅ Eliminar libro del carrito (ahora con GET)
+        //Eliminar libro del carrito (ahora con GET)
         [HttpGet]
         public ActionResult EliminarDelCarrito(int idLibro)
         {
@@ -1777,7 +2025,7 @@ namespace BookStore.Cliente.Web.Controllers
             return RedirectToAction("VerCarrito");
         }
 
-        // ✅ Confirmar pedido (registrar)
+        //Confirmar pedido (registrar)
         [HttpPost]
         public ActionResult ConfirmarPedido(string metodoPago)
         {
@@ -1812,7 +2060,7 @@ namespace BookStore.Cliente.Web.Controllers
                 int idPedido = pedidoLN.CrearPedido(pedido);
                 pedido.Id_Pedido = idPedido;
 
-                // 🔹 Agregar cliente “a mano” para mostrar en la vista
+                //Agregar cliente “a mano” para mostrar en la vista
                 pedido.Cliente = new BookStore.Entidades.Core.Cliente
                 {
                     Id_Cliente = idCliente,
@@ -1833,4 +2081,5 @@ namespace BookStore.Cliente.Web.Controllers
         }
     }
 }
+
 
