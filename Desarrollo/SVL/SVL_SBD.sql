@@ -141,3 +141,11 @@ VALUES
 ('El Señor de los Anillos: La Comunidad del Anillo', 'J.R.R. Tolkien', '9780618640157', 72.50, 8, 'Fantasía', 'Allen & Unwin'),
 ('It', 'Stephen King', '9781501142970', 75.00, 6, 'Terror', 'Viking Press'),
 ('Los Juegos del Hambre', 'Suzanne Collins', '9780439023481', 49.50, 20, 'Ciencia Ficción', 'Scholastic Press');
+
+ALTER TABLE Libro
+ADD Formato NVARCHAR(20) NOT NULL 
+    CONSTRAINT DF_Libro_Formato DEFAULT 'Físico';
+
+UPDATE Libro
+SET Formato = 'Digital'
+WHERE Id_Libro IN (2, 3, 5, 20, 24, 25, 27, 28, 29, 31);
